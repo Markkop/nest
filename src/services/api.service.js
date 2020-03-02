@@ -32,9 +32,7 @@ module.exports = {
 				path: "/asana/",
 				mappingPolicy: "restrict",
 				aliases: {
-					"GET /:startDate/:endDate": "asana.getTasksByDateRange",
-					"POST /:projectId/sync/:startDate/:endDate":
-						"asana.syncProjectTasksByDateRange"
+					"GET /:startDate/:endDate": "asana.getTasksByDateRange"
 				},
 				bodyParsers: {
 					json: true

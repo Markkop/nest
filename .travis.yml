@@ -1,12 +1,12 @@
 sudo: required
 language: node_js
 node_js:
-  - "10"
+- '10'
 script:
-  - npm run test
+- npm run test
 deploy:
   provider: heroku
   api_key:
-    secure: "YOURs ENCRYPTED API KEY"
+    secure: pan8oNbFGARYQJXYWmHdDYzpBBzGOxrz/RFcfNMmCS28mDXOyHnZz9+/l2wSgzACEZWVLz/PpH8oponF9Iy6I9HS0dV6M5KeAAibRr00zTTN9vRgCnurgj1iTUZw1AjxvJfyWmkzDgu55EygcFo71hWl95gTEA0eaZubVqur4A0ElNcMEOZF7asCD0z4MVodDFtbXM9FjXBQslQbONH9outFwr+FOFzmI2OaeZAN1hBqlBPVaFsv/SI7obB7mgPAiBtS1RoMhf2UqX+pLvn2I6HKi/EAhAUdvp25EUGKI3Cw0g+WBg4MJ0kuLqfuRypd22ft/0CHvtMmMcB8dYjjEJ76R7fGi1CjxTdHiaeg7q+00GVMqBUvXFlMkPgGJccqinCLpShFPB9XlJ6OGCSsuo4twt370BdzvEUArNIPdR4k+J8xyhWo/jSlSUbc5VrbT3uVjBqagCXUsQ2BYjyUUtJVysPNmrTMrH8sqJ7Y0uQA/WZ6mj6wvXSUC0H48PcGNKUVELnIQ3rQFITzGd8+NCap0yey2Gq0uk3WCdUDSuiFjV0iX3WxJC3maQ7ra0uMvPcvtk+LbKCLVjA4YEiETvMC+D5Y4rhx78BzJqzbd0re3k3s4VHcEeJlTp+rXKBtxh2zgCo03jVqn3lAlK2kl0EuS/1lMQX8mjgsfAqr/lM=
 true:
   branch: master
