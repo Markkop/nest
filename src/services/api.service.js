@@ -6,7 +6,7 @@ module.exports = {
 
 	// More info about settings: https://moleculer.services/docs/0.13/moleculer-web.html
 	settings: {
-		port: process.env.REST_API_GATEWAY_PORT || 3040,
+		port: process.env.PORT || 3040,
 		path: "/api",
 		routes: [
 			{
