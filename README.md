@@ -2,6 +2,7 @@
 
 ![Repo status](https://www.repostatus.org/badges/latest/active.svg)
 [![Build Status](https://travis-ci.com/Markkop/nest.svg?token=kLjLhr4pnWBb2ZsKxrHz&branch=master)](https://travis-ci.com/Markkop/nest)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b73c2ddd14e0433698aa6d9ab1d55a3b)](https://www.codacy.com/manual/Markkop/nest?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Markkop/nest&amp;utm_campaign=Badge_Grade)
 [![Moleculer](https://badgen.net/badge/Powered%20by/Moleculer/0e83cd)](https://moleculer.services)
 
 ## About
