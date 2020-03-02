@@ -4,12 +4,14 @@
 [![Build Status](https://travis-ci.com/Markkop/nest.svg?token=kLjLhr4pnWBb2ZsKxrHz&branch=master)](https://travis-ci.com/Markkop/nest)
 [![Moleculer](https://badgen.net/badge/Powered%20by/Moleculer/0e83cd)](https://moleculer.services)
 
-This is a [Moleculer](https://moleculer.services/)-based microservices project. Generated with the [Moleculer CLI](https://moleculer.services/docs/0.14/moleculer-cli.html).
+## About
+
+This is a [Moleculer](https://moleculer.services/)-based project to manage personal microservices.
 
 ## Usage
 
-Start the project with `npm run dev` command.
-After starting, open the http://localhost:3000/ URL in your browser.
+Start the project with `npm run dev` command.  
+After starting, open the http://localhost:3040/ URL in your browser.  
 On the welcome page you can test the generated services via API Gateway and check the nodes & services.
 
 In the terminal, try the following commands:
@@ -23,6 +25,10 @@ In the terminal, try the following commands:
 
 -   **api**: API Gateway services
 -   **greeter**: Sample service with `hello` and `welcome` actions.
+-   **asana**: Asana task service.
+-   **habitica**: Habitica habit and task service.
+-   **trello**: Soon...
+-   **discord**: Soon...
 
 ## Useful links
 
@@ -37,3 +43,7 @@ In the terminal, try the following commands:
 -   `npm run lint`: Run ESLint
 -   `npm run ci`: Run continuous test mode with watching
 -   `npm test`: Run tests & generate coverage report
+
+## Deploy
+
+The deploy is made via TravisCI to Heroku
