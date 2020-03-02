@@ -196,9 +196,8 @@ module.exports = {
 	methods: {
 		/**
 		 * Create Habitica task based on received asana events
-		 * TO DO: param and return doc
-		 * @param { Object[] } events
-		 * @returns { Object }
+		 * @param { import('asana').resources.Events.Type[] } events
+		 * @returns { import('./habitica.service'.HabiticaTask) }
 		 */
 		async syncTasksByEvents(events) {
 			try {
