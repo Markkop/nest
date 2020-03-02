@@ -1,0 +1,12 @@
+sudo: required
+language: node_js
+node_js:
+  - "10"
+script:
+  - npm run test
+deploy:
+  provider: heroku
+  api_key:
+    secure: "YOURs ENCRYPTED API KEY"
+true:
+  branch: master
