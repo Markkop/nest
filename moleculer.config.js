@@ -28,16 +28,16 @@ require("dotenv").config();
  */
 module.exports = {
 	// Namespace of nodes to segment your nodes on the same network.
-	namespace: process.env.NAMESPACE,
+	namespace: "nest",
 
 	// Unique node identifier. Must be unique in a namespace.
-	nodeID: `${process.env.NAMESPACE}-${process.pid}`,
+	nodeID: `nest-${process.pid}`,
 
 	// Enable/disable logging or use custom logger. More info: https://moleculer.services/docs/0.13/logging.html
-	logger: process.env.LOGGER,
+	logger: true,
 
 	// Log level for built-in console logger. Available values: trace, debug, info, warn, error, fatal
-	logLevel: process.env.LOGLEVEL,
+	logLevel: "info",
 
 	// Log formatter for built-in console logger. Available values: default, simple, short. It can be also a `Function`.
 	logFormatter: "default",
@@ -55,7 +55,7 @@ module.exports = {
 	// Define a serializer.
 	// Available values: "JSON", "Avro", "ProtoBuf", "MsgPack", "Notepack", "Thrift".
 	// More info: https://moleculer.services/docs/0.13/networking.html
-	serializer: process.env.SERIALIZER,
+	serializer: "JSON",
 
 	// Number of milliseconds to wait before reject a request with a RequestTimeout error. Disabled: 0
 	requestTimeout: 10 * 1000,
