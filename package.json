@@ -2,8 +2,10 @@
   "name": "nest",
   "version": "1.0.0",
   "description": "My personal microservices collection",
+  "author": "Marcelo 'Mark' Kopmann",
+  "homepage": "https://github.com/Markkop/nest",
   "scripts": {
-    "dev": "moleculer-runner --repl --hot src/services/**/*.service.js",
+    "dev": "moleculer-runner --repl --hot",
     "start": "moleculer-runner",
     "cli": "moleculer connect ",
     "ci": "jest --watch",
@@ -12,9 +14,10 @@
   },
   "keywords": [
     "microservices",
-    "moleculer"
+    "moleculer",
+    "habitica",
+    "asana"
   ],
-  "author": "",
   "devDependencies": {
     "eslint": "^6.8.0",
     "jest": "^25.1.0",
