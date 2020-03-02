@@ -187,6 +187,12 @@ module.exports = {
 			const asanaTask = await this.broker.call("asana.getAsanaTaskById", {
 				gid
 			});
+
+			const { assignee } = asanaTask;
+			if (!assignee || assignee.gid !== process.env.ASSIGNEE_GID) {
+				return { syncd: "not" };
+			}
+
 			const syncdTask = await this.deduplicateTask(asanaTask);
 			this.logger.info("Synchronized task", syncdTask.id);
 			return syncdTask;
@@ -235,7 +241,7 @@ module.exports = {
 
 				console.log(error);
 				throw new Error(
-					`There's been a problem finding the Habitica task related to "${taskId}"`,
+					`There's been a problem finding the Habitica task related to "${id}"`,
 					error
 				);
 			}

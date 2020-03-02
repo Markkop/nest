@@ -195,6 +195,44 @@ module.exports = {
 	 */
 	methods: {
 		/**
+		 * Create Habitica task based on received asana events
+		 * TO DO: param and return doc
+		 * @param { Object[] } events
+		 * @returns { Object }
+		 */
+		async syncTasksByEvents(events) {
+			try {
+				const uniqueIds = (events || []).reduce((taskIds, event) => {
+					this.logger.info("Received webhook event", event);
+					const taskId =
+						typeof event.resource === "object"
+							? event.resource.gid
+							: event.resource;
+					if (
+						event.resource.resource_type === "task" &&
+						!taskIds.includes(taskId)
+					) {
+						taskIds.push(taskId);
+					}
+					return taskIds;
+				}, []);
+				const tasks = await Promise.all(
+					uniqueIds.map(gid =>
+						this.broker.call("habitica.syncTaskFromAsanaById", {
+							gid
+						})
+					)
+				);
+				return tasks;
+			} catch (error) {
+				throw new AsanaError(
+					"There's been a problem with task sync",
+					error
+				);
+			}
+		},
+
+		/**
 		 * Get an Asana task by its id.
 		 *
 		 * @param { string } gid - Task gid.
@@ -315,32 +353,6 @@ module.exports = {
 			} catch (error) {
 				throw new AsanaError(
 					"Could not get the workspace webhooks",
-					error
-				);
-			}
-		},
-
-		async syncTasksByEvents(events) {
-			try {
-				const uniqueIds = (events || []).reduce((taskIds, event) => {
-					this.logger.info("Received webhook event", event);
-					const taskId =
-						typeof event.resource === "object"
-							? event.resource.gid
-							: event.resource;
-					if (
-						event.resource.resource_type === "task" &&
-						!taskIds.includes(taskId)
-					) {
-						taskIds.push(taskId);
-					}
-					return taskIds;
-				}, []);
-				const tasks = await Promise.all(uniqueIds.map(this.syncTask));
-				return tasks;
-			} catch (error) {
-				throw new AsanaError(
-					"There's been a problem with task sync",
 					error
 				);
 			}
