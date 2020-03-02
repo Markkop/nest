@@ -1,6 +1,7 @@
 # :deciduous_tree: Nest
 
 ![Repo status](https://www.repostatus.org/badges/latest/active.svg)
+[![Build Status](https://travis-ci.com/Markkop/nest.svg?token=kLjLhr4pnWBb2ZsKxrHz&branch=master)](https://travis-ci.com/Markkop/nest)
 [![Moleculer](https://badgen.net/badge/Powered%20by/Moleculer/0e83cd)](https://moleculer.services)
 
 This is a [Moleculer](https://moleculer.services/)-based microservices project. Generated with the [Moleculer CLI](https://moleculer.services/docs/0.14/moleculer-cli.html).
