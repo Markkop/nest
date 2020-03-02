@@ -3,6 +3,15 @@ const { Errors } = require("moleculer");
 const { AsanaError } = require("../utils/errors");
 const axios = require("axios");
 
+/**
+ * @typedef AsanaWebhook
+ * @property { Number } gid
+ * @property { Boolean } active
+ * @property { import('asana').resources.Projects.Type } resource
+ * @property { 'webhook' } resource_type
+ * @property { String } target
+ */
+
 module.exports = {
 	name: "asana",
 
@@ -67,7 +76,7 @@ module.exports = {
 				data: { type: "object" }
 			},
 			/**
-			 * Deletes a task based on its id.
+			 * Updates a task based on its id.
 			 *
 			 * @param { import('moleculer').Context } ctx - Moleculer context.
 			 * @returns { Promise.<import('asana').resources.Tasks.Type> } Asana updated task.
@@ -89,21 +98,6 @@ module.exports = {
 			 */
 			handler(ctx) {
 				return this.deleteTask(ctx.params.id);
-			}
-		},
-
-		close: {
-			params: {
-				id: { type: "string" }
-			},
-			/**
-			 * Closes a task based on its id.
-			 *
-			 * @param { import('moleculer').Context } ctx - Moleculer context.
-			 * @returns { Promise.<import('asana').resources.Tasks.Type> } Asana closed task.
-			 */
-			handler(ctx) {
-				return this.closeTask(ctx.params.id);
 			}
 		},
 
@@ -160,6 +154,11 @@ module.exports = {
 		},
 
 		syncByEvents: {
+			/**
+			 * Create Habitica task based on received asana events
+			 * @param { import('muleculer').Context } ctx - Molecular context.
+			 * @returns { import('./habitica.service').HabiticaTask) }
+			 */
 			handler(ctx) {
 				this.syncTasksByEvents(ctx.params.events);
 				return { ack: true };
@@ -167,6 +166,11 @@ module.exports = {
 		},
 
 		webhooks: {
+			/**
+			 * Get current webhooks for the used workspace
+			 * @param { import('muleculer').Context } ctx - Molecular context.
+			 * @returns { AsanaWebhook } Asana webhook
+			 */
 			handler(ctx) {
 				return this.getWorkspaceWebhooks();
 			}
@@ -197,7 +201,7 @@ module.exports = {
 		/**
 		 * Create Habitica task based on received asana events
 		 * @param { import('asana').resources.Events.Type[] } events
-		 * @returns { import('./habitica.service'.HabiticaTask) }
+		 * @returns { import('./habitica.service').HabiticaTask) }
 		 */
 		async syncTasksByEvents(events) {
 			try {
@@ -268,23 +272,6 @@ module.exports = {
 		},
 
 		/**
-		 * Closes a task at Asaana and update its state at the server
-		 *
-		 * @param { string } gid - Asana task id.
-		 * @returns { Promise.<import('asana').resources.Tasks.Type> } closed task.
-		 */
-		async closeTask(gid) {
-			try {
-				const asanaTask = await this.updateTask(gid, {
-					completed: true
-				});
-				return asanaTask;
-			} catch (error) {
-				throw new AsanaError("Could not close Asana task", error);
-			}
-		},
-
-		/**
 		 * Updates the given task content at Asana.
 		 *
 		 * @param { string } gid - Asana task id.
@@ -339,6 +326,10 @@ module.exports = {
 			}
 		},
 
+		/**
+		 * Get current webhooks for the used workspace
+		 * @returns { AsanaWebhook } Asana webhook
+		 */
 		async getWorkspaceWebhooks() {
 			try {
 				const {
