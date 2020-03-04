@@ -93,9 +93,8 @@ module.exports = {
 
 		log: {
 			handler(ctx) {
-				const payload = ctx;
-				this.logger.info(payload);
-				return payload;
+				this.logger.info(ctx.params);
+				return ctx.params;
 			}
 		},
 
