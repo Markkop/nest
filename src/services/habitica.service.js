@@ -30,6 +30,14 @@ const axios = require("axios");
  * @property { String } type
  */
 
+/**
+ * @typedef HabiticaChatMessage
+ *
+ * @property { String } user
+ * @property { String } text
+ * @property { String } id
+ */
+
 module.exports = {
 	name: "habitica",
 
@@ -92,12 +100,33 @@ module.exports = {
 		},
 
 		log: {
+			/**
+			 * Logs params for debugging
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { Object } params
+			 */
 			handler(ctx) {
 				this.logger.info(ctx.params);
 				return ctx.params;
 			}
 		},
 
+		onWebhookTrigger: {
+			/**
+			 * Actions to be done according to the webhook's trigger
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { Any }
+			 */
+			params: {
+				type: { type: "string" }
+			},
+			handler(ctx) {
+				const eventMap = {
+					questInvited: () => this.onQuestInvite(ctx.params)
+				};
+				return eventMap[ctx.params.type]();
+			}
+		},
 		/**
 		 * Action to get task from Asana and create it on Habitica.
 		 */
@@ -157,13 +186,63 @@ module.exports = {
 			handler(ctx) {
 				return this.readAllNotifications();
 			}
+		},
+
+		/**
+		 * Creates a new message in the party's chat
+		 * @param { String } message
+		 * @returns { HabiticaChatMessage }
+		 */
+		createChatMessage: {
+			handler(ctx) {
+				return this.createChatMessage(ctx.params.message);
+			}
 		}
 	},
+
+	/**
+	 * @typedef QuestInvited
+	 * @property { 'questActivity' } webhookType
+	 * @property { 'questInvited' } type
+	 * @property { Object } group
+	 * @property { String } group.id
+	 * @property { String } group.name
+	 * @property { Object } quest
+	 * @property { String } quest.key
+	 * @property { Object } user
+	 * @property { String } user._id
+	 */
 
 	/**
 	 * Methods.
 	 */
 	methods: {
+		/**
+		 * Events to happen when the webhook type is questInvited
+		 * @param { QuestInvited  } questInvitedData
+		 * @returns { HabiticaChatMessage }
+		 */
+		async onQuestInvite(questInvitedData) {
+			const message = `[ QUEST INVITE ] ${questInvitedData.quest.key}`;
+			return this.createChatMessage(message);
+		},
+
+		/**
+		 * Creates a new message in the party's chat
+		 * @param { String } message
+		 * @returns { HabiticaChatMessage }
+		 */
+		async createChatMessage(message) {
+			const {
+				data: { data: responseData }
+			} = await this.axios.post("/groups/party/chat", { message });
+			const {
+				message: { id, user, text }
+			} = responseData;
+			const messageCreated = { id, user, text };
+			return messageCreated;
+		},
+
 		async listTasks() {
 			try {
 				const {
