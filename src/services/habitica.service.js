@@ -61,6 +61,14 @@ module.exports = {
 			}
 		},
 
+		log: {
+			handler(ctx) {
+				const payload = ctx;
+				this.logger.info(payload);
+				return payload;
+			}
+		},
+
 		/**
 		 * Action to get task from Asana and create it on Habitica.
 		 */

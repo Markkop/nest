@@ -168,7 +168,7 @@ module.exports = {
 				// Custom logger
 				logger: null,
 				// Using colors
-				colors: true,
+				colors: false,
 				// Width of row
 				width: 100,
 				// Gauge width in the row

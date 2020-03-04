@@ -22,7 +22,8 @@ module.exports = {
 							return next();
 						},
 						"asana.syncByEvents"
-					]
+					],
+					"POST /habitica": "habitica.log"
 				},
 				bodyParsers: {
 					json: true
