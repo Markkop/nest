@@ -18,6 +18,18 @@ const axios = require("axios");
  * @property { Boolean } [completed]
  */
 
+/**
+ * @typedef HabiticaNotification
+ *
+ * @property { String } id
+ * @property { Object } data
+ * @property { Object } data.group
+ * @property { String } data.group.id
+ * @property { String } data.group.name
+ * @property { Boolean } seen
+ * @property { String } type
+ */
+
 module.exports = {
 	name: "habitica",
 
@@ -44,18 +56,36 @@ module.exports = {
 	 */
 	actions: {
 		create: {
+			/**
+			 * Creates a task
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaTask } Habitica created task.
+			 */
 			handler(ctx) {
 				return this.createTask(ctx.params);
 			}
 		},
 
 		update: {
+			/**
+			 * Updates a task
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaTask } Habitica updated task.
+			 */
 			handler(ctx) {
 				return this.updateTask(ctx.params);
 			}
 		},
 
 		list: {
+			/**
+			 * Lists all tasks
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaTask[] } Habitica tasks
+			 */
 			handler(ctx) {
 				return this.listTasks();
 			}
@@ -77,56 +107,54 @@ module.exports = {
 				gid: { type: "string" }
 			},
 
+			/**
+			 * Creates or updates a task on habitica based on an Asana task gid
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaTask } Habitica created or updated task.
+			 */
 			handler(ctx) {
 				const response = this.syncTaskFromAsanaById(ctx.params.gid);
 				return response;
 			}
 		},
 
-		/**
-		 * Action to get task from Asana and create it on Habitica.
-		 */
-		syncTaskById: {
-			params: {
-				taskId: { type: "string" }
-			},
-
-			handler(ctx) {
-				const response = this.syncTask(ctx.params.taskId);
-				return response;
-			}
-		},
-
-		/**
-		 * Get Habitica task by its id
-		 */
 		getTaskById: {
 			params: {
 				taskId: { type: "string" }
 			},
 
+			/**
+			 * Gets an Habitica task by its id
+			 * 			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaTask } Habitica  task.
+			 */
 			handler(ctx) {
 				const response = this.getTaskById(ctx.params.taskId);
 				return response;
 			}
 		},
-		/**
-		 * Action to get user's notifications list
-		 *
-		 * @returns { Object[] } User's notifcations
-		 */
+
 		getNotificationsFromHabitica: {
+			/**
+			 * Gets current user's notifications from Habitica
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaNotification[] } Habitica user's notification list
+			 */
 			handler(ctx) {
 				return this.getNotificationsFromHabitica();
 			}
 		},
 
-		/**
-		 * Action to read all user's notifications
-		 *
-		 * @returns { Object[] } User's notifcations after reading
-		 */
 		readAllNotifications: {
+			/**
+			 * Reads all user's notifications from Habitica
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaNotification[] } Habitica user's notification list
+			 */
 			handler(ctx) {
 				return this.readAllNotifications();
 			}
@@ -195,6 +223,12 @@ module.exports = {
 			const asanaTask = await this.broker.call("asana.getAsanaTaskById", {
 				gid
 			});
+
+			const { assignee } = asanaTask;
+			if (!assignee || assignee.gid !== process.env.ASSIGNEE_GID) {
+				return { syncd: "not" };
+			}
+
 			const syncdTask = await this.deduplicateTask(asanaTask);
 			this.logger.info("Synchronized task", syncdTask.id);
 			return syncdTask;
@@ -243,7 +277,7 @@ module.exports = {
 
 				console.log(error);
 				throw new Error(
-					`There's been a problem finding the Habitica task related to "${taskId}"`,
+					`There's been a problem finding the Habitica task related to "${id}"`,
 					error
 				);
 			}
@@ -279,9 +313,9 @@ module.exports = {
 		},
 
 		/**
-		 * Get user's notification list
+		 * Gets current user's notifications from Habitica
 		 *
-		 * @returns { Object[]} Notifications TODO: typedef this
+		 * @returns { HabiticaNotification[] } Habitica user's notification list
 		 */
 		async getNotificationsFromHabitica() {
 			const {
@@ -291,9 +325,9 @@ module.exports = {
 		},
 
 		/**
-		 * Reads all user's notifications
+		 * Reads all user's notifications from Habitica
 		 *
-		 * @returns { Object[] } User's notifcations after reading
+		 * @returns { HabiticaNotification[] } Habitica user's notification list
 		 */
 		async readAllNotifications() {
 			const notifications = await this.getNotificationsFromHabitica();

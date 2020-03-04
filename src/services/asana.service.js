@@ -3,6 +3,15 @@ const { Errors } = require("moleculer");
 const { AsanaError } = require("../utils/errors");
 const axios = require("axios");
 
+/**
+ * @typedef AsanaWebhook
+ * @property { Number } gid
+ * @property { Boolean } active
+ * @property { import('asana').resources.Projects.Type } resource
+ * @property { 'webhook' } resource_type
+ * @property { String } target
+ */
+
 module.exports = {
 	name: "asana",
 
@@ -67,7 +76,7 @@ module.exports = {
 				data: { type: "object" }
 			},
 			/**
-			 * Deletes a task based on its id.
+			 * Updates a task based on its id.
 			 *
 			 * @param { import('moleculer').Context } ctx - Moleculer context.
 			 * @returns { Promise.<import('asana').resources.Tasks.Type> } Asana updated task.
@@ -89,21 +98,6 @@ module.exports = {
 			 */
 			handler(ctx) {
 				return this.deleteTask(ctx.params.id);
-			}
-		},
-
-		close: {
-			params: {
-				id: { type: "string" }
-			},
-			/**
-			 * Closes a task based on its id.
-			 *
-			 * @param { import('moleculer').Context } ctx - Moleculer context.
-			 * @returns { Promise.<import('asana').resources.Tasks.Type> } Asana closed task.
-			 */
-			handler(ctx) {
-				return this.closeTask(ctx.params.id);
 			}
 		},
 
@@ -160,6 +154,11 @@ module.exports = {
 		},
 
 		syncByEvents: {
+			/**
+			 * Create Habitica task based on received asana events
+			 * @param { import('muleculer').Context } ctx - Molecular context.
+			 * @returns { import('./habitica.service').HabiticaTask) }
+			 */
 			handler(ctx) {
 				this.syncTasksByEvents(ctx.params.events);
 				return { ack: true };
@@ -167,6 +166,11 @@ module.exports = {
 		},
 
 		webhooks: {
+			/**
+			 * Get current webhooks for the used workspace
+			 * @param { import('muleculer').Context } ctx - Molecular context.
+			 * @returns { AsanaWebhook } Asana webhook
+			 */
 			handler(ctx) {
 				return this.getWorkspaceWebhooks();
 			}
@@ -194,6 +198,43 @@ module.exports = {
 	 * Methods.
 	 */
 	methods: {
+		/**
+		 * Create Habitica task based on received asana events
+		 * @param { import('asana').resources.Events.Type[] } events
+		 * @returns { import('./habitica.service').HabiticaTask) }
+		 */
+		async syncTasksByEvents(events) {
+			try {
+				const uniqueIds = (events || []).reduce((taskIds, event) => {
+					this.logger.info("Received webhook event", event);
+					const taskId =
+						typeof event.resource === "object"
+							? event.resource.gid
+							: event.resource;
+					if (
+						event.resource.resource_type === "task" &&
+						!taskIds.includes(taskId)
+					) {
+						taskIds.push(taskId);
+					}
+					return taskIds;
+				}, []);
+				const tasks = await Promise.all(
+					uniqueIds.map(gid =>
+						this.broker.call("habitica.syncTaskFromAsanaById", {
+							gid
+						})
+					)
+				);
+				return tasks;
+			} catch (error) {
+				throw new AsanaError(
+					"There's been a problem with task sync",
+					error
+				);
+			}
+		},
+
 		/**
 		 * Get an Asana task by its id.
 		 *
@@ -227,23 +268,6 @@ module.exports = {
 				return asanaTask;
 			} catch (error) {
 				throw new AsanaError("Could not create Asana task", error);
-			}
-		},
-
-		/**
-		 * Closes a task at Asaana and update its state at the server
-		 *
-		 * @param { string } gid - Asana task id.
-		 * @returns { Promise.<import('asana').resources.Tasks.Type> } closed task.
-		 */
-		async closeTask(gid) {
-			try {
-				const asanaTask = await this.updateTask(gid, {
-					completed: true
-				});
-				return asanaTask;
-			} catch (error) {
-				throw new AsanaError("Could not close Asana task", error);
 			}
 		},
 
@@ -302,6 +326,10 @@ module.exports = {
 			}
 		},
 
+		/**
+		 * Get current webhooks for the used workspace
+		 * @returns { AsanaWebhook } Asana webhook
+		 */
 		async getWorkspaceWebhooks() {
 			try {
 				const {
@@ -315,32 +343,6 @@ module.exports = {
 			} catch (error) {
 				throw new AsanaError(
 					"Could not get the workspace webhooks",
-					error
-				);
-			}
-		},
-
-		async syncTasksByEvents(events) {
-			try {
-				const uniqueIds = (events || []).reduce((taskIds, event) => {
-					this.logger.info("Received webhook event", event);
-					const taskId =
-						typeof event.resource === "object"
-							? event.resource.gid
-							: event.resource;
-					if (
-						event.resource.resource_type === "task" &&
-						!taskIds.includes(taskId)
-					) {
-						taskIds.push(taskId);
-					}
-					return taskIds;
-				}, []);
-				const tasks = await Promise.all(uniqueIds.map(this.syncTask));
-				return tasks;
-			} catch (error) {
-				throw new AsanaError(
-					"There's been a problem with task sync",
 					error
 				);
 			}
