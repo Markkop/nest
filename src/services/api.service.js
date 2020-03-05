@@ -23,7 +23,7 @@ module.exports = {
 						},
 						"asana.syncByEvents"
 					],
-					"POST /habitica": "habitica.log"
+					"POST /habitica": "habitica.onWebhookTrigger"
 				},
 				bodyParsers: {
 					json: true
