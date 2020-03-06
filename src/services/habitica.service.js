@@ -249,10 +249,22 @@ module.exports = {
 				quest: { key: questId }
 			} = questInvitedData;
 			const quest = await this.getQuest(questId);
-			const {
-				boss: { hp }
-			} = quest;
-			const message = `[ NEW QUEST ] ${quest.text} [HP ${hp}/${hp}]`;
+			const { boss, collect } = quest;
+			let message = "";
+
+			if (boss) {
+				const { hp } = boss;
+				message = `[ NEW QUEST ] ${quest.text} [HP ${hp}/${hp}]`;
+			}
+
+			if (collect) {
+				const items = Object.values(collect);
+				const totalCount = items.reduce(
+					(total, item) => total + item.count,
+					0
+				);
+				message = `[ NEW QUEST ] ${quest.text} [${totalCount} items]`;
+			}
 			return this.createChatMessage(message);
 		},
 

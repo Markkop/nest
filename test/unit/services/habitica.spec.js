@@ -11,12 +11,12 @@ jest.mock("axios");
 describe("Test 'habitica' service", () => {
 	axios.create.mockImplementationOnce(() => ({
 		get: () => Promise.resolve({ data: contentMock }),
-		post: () =>
+		post: (path, payload) =>
 			Promise.resolve({
 				data: {
 					data: {
 						message: {
-							text: "[ NEW QUEST ] The Basi-List [HP 100/100]"
+							text: payload.message
 						}
 					}
 				}
