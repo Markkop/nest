@@ -2,8 +2,27 @@
 
 const { ServiceBroker } = require("moleculer");
 const HabiticaService = require("../../../src/services/habitica.service");
+const contentMock = require("../mocks/content.json");
+const axios = require("axios");
+const questActivityWebhookMock = require("../mocks/questActivityWebhook.json");
+
+jest.mock("axios");
 
 describe("Test 'habitica' service", () => {
+	axios.create.mockImplementationOnce(() => ({
+		get: () => Promise.resolve({ data: contentMock }),
+		post: () =>
+			Promise.resolve({
+				data: {
+					data: {
+						message: {
+							text: "[ NEW QUEST ] The Basi-List [HP 100/100]"
+						}
+					}
+				}
+			})
+	}));
+
 	let broker = new ServiceBroker({ logger: false });
 	const service = broker.createService(HabiticaService);
 
@@ -12,33 +31,11 @@ describe("Test 'habitica' service", () => {
 
 	describe("Test 'habitica.onWebhookTrigger' action", () => {
 		it("should return a chat message on group invite", async () => {
-			const webhookData = {
-				webhookType: "questActivity",
-				type: "questInvited",
-				group: {
-					id: "c451a4e4-7ae7-4084-99c1-a59f89010354",
-					name: "[ Tic Tic Powers ]"
-				},
-				quest: { key: "basilist" },
-				user: { _id: "40387571-91ee-489e-960f-278bf8fd503b" }
-			};
-			service.axios = {
-				post: () => ({
-					data: {
-						data: {
-							message: {
-								user: "Mark Kop",
-								text: "[ QUEST INVITE ] basilist"
-							}
-						}
-					}
-				})
-			};
 			const res = await broker.call(
 				"habitica.onWebhookTrigger",
-				webhookData
+				questActivityWebhookMock
 			);
-			expect(res.text).toBe(`[ QUEST INVITE ] basilist`);
+			expect(res.text).toBe(`[ NEW QUEST ] The Basi-List [HP 100/100]`);
 		});
 	});
 });

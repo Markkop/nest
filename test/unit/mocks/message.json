@@ -1,0 +1,63 @@
+{
+	"appVersion": "4.136.0",
+	"data": {
+		"message": {
+			"_id": "id",
+			"backer": {},
+			"client": "client",
+			"contributor": {
+				"admin": false,
+				"contributions": "",
+				"level": 3,
+				"text": "Linguistic Scribe, Blacksmith"
+			},
+			"flagCount": 0,
+			"flags": {},
+			"groupId": "groupid",
+			"id": "id",
+			"info": {},
+			"likes": {},
+			"text": "[ QUEST ] The Basi-List",
+			"timestamp": "2020-03-04T14:22:23.770Z",
+			"unformattedText": "[ QUEST ] The Basi-List",
+			"user": "Mark Kop",
+			"userStyles": {
+				"items": {
+					"currentMount": "",
+					"currentPet": "Gryphon-Base",
+					"gear": {
+						"costume": {},
+						"equipped": {}
+					}
+				},
+				"preferences": {},
+				"stats": {
+					"buffs": {
+						"seafoam": false,
+						"shinySeed": false,
+						"snowball": false,
+						"spookySparkles": false
+					},
+					"class": "warrior"
+				}
+			},
+			"username": "KopMark",
+			"uuid": "uuid"
+		}
+	},
+	"notifications": [
+		{
+			"data": {
+				"group": {
+					"id": "id1",
+					"name": "name1"
+				}
+			},
+			"id": "id2",
+			"seen": false,
+			"type": "name2"
+		}
+	],
+	"success": true,
+	"userV": 25000
+}

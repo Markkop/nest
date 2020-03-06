@@ -214,6 +214,28 @@ module.exports = {
 	 */
 
 	/**
+	 * @typedef Quest
+	 * @property { String } text
+	 * @property { String } notes
+	 * @property { String } completion
+	 * @property { String } completionChat
+	 * @property { Number } value
+	 * @property { String } category
+	 * @property { Object } boss
+	 * @property { String } boss.name
+	 * @property { Number } boss.hp
+	 * @property { Number } boss.str
+	 * @property { Number } boss.def
+	 * @property { Object } boss.rage
+	 * @property { Object } boss.desperation
+	 * @property { Object } drop
+	 * @property { String } drop.items
+	 * @property { String } drop.gp
+	 * @property { String } drop.exp
+	 * @property { String } drop.key
+	 */
+
+	/**
 	 * Methods.
 	 */
 	methods: {
@@ -223,8 +245,33 @@ module.exports = {
 		 * @returns { HabiticaChatMessage }
 		 */
 		async onQuestInvite(questInvitedData) {
-			const message = `[ QUEST INVITE ] ${questInvitedData.quest.key}`;
+			const {
+				quest: { key: questId }
+			} = questInvitedData;
+			const quest = await this.getQuest(questId);
+			const {
+				boss: { hp }
+			} = quest;
+			const message = `[ NEW QUEST ] ${quest.text} [HP ${hp}/${hp}]`;
 			return this.createChatMessage(message);
+		},
+
+		/**
+		 * Get quest data from a given quest id
+		 * @param { String  } questId
+		 * @returns { Quest }
+		 */
+		async getQuest(questId) {
+			try {
+				const {
+					data: {
+						data: { quests }
+					}
+				} = await this.axios.get("/content");
+				return quests && quests[questId];
+			} catch (error) {
+				console.log(error);
+			}
 		},
 
 		/**
@@ -233,14 +280,18 @@ module.exports = {
 		 * @returns { HabiticaChatMessage }
 		 */
 		async createChatMessage(message) {
-			const {
-				data: { data: responseData }
-			} = await this.axios.post("/groups/party/chat", { message });
-			const {
-				message: { id, user, text }
-			} = responseData;
-			const messageCreated = { id, user, text };
-			return messageCreated;
+			try {
+				const {
+					data: { data: responseData }
+				} = await this.axios.post("/groups/party/chat", { message });
+				const {
+					message: { id, user, text }
+				} = responseData;
+				const messageCreated = { id, user, text };
+				return messageCreated;
+			} catch (error) {
+				this.logger.error(error);
+			}
 		},
 
 		async listTasks() {

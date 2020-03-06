@@ -1,0 +1,10 @@
+{
+	"webhookType": "questActivity",
+	"type": "questInvited",
+	"group": {
+		"id": "c451a4e4-7ae7-4084-99c1-a59f89010354",
+		"name": "[ Tic Tic Powers ]"
+	},
+	"quest": { "key": "basilist" },
+	"user": { "_id": "40387571-91ee-489e-960f-278bf8fd503b" }
+}
