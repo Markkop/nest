@@ -1,10 +1,8 @@
-const axios = require("axios");
 const cheerio = require("cheerio");
+const puppeteer = require("puppeteer");
 
 module.exports = {
 	name: "scrapper",
-
-	mixins: [axios],
 
 	/**
 	 * Actions.
@@ -22,33 +20,33 @@ module.exports = {
 	 */
 	methods: {
 		async getMotorhome() {
-			try {
-				const url =
-					"https://lasvegas.craigslist.org/search/sss?query=motorhome&sort=rel&min_price=1000&max_price=3000";
-				const options = {
-					headers: {
-						"User-Agent":
-							"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
-					}
-				};
-				const { data: html } = await axios(url, options);
-				const $ = cheerio.load(html);
-				const result = $(".result-row ");
-				const product = [];
+			const url =
+				"https://lasvegas.craigslist.org/search/sss?query=motorhome&sort=rel&min_price=1000&max_price=3000";
+			return puppeteer
+				.launch()
+				.then(browser => browser.newPage())
+				.then(page => {
+					return page.goto(url).then(function() {
+						return page.content();
+					});
+				})
+				.then(html => {
+					const $ = cheerio.load(html);
+					const products = $(".result-row");
 
-				result.each(function() {
-					const title = $(this)
-						.find(".result-title")
-						.text();
+					const newsHeadlines = [];
+					products.each(function() {
+						newsHeadlines.push({
+							title: $(this)
+								.find(".result-title")
+								.text()
+						});
+					});
 
-					product.push({ title });
-				});
-
-				return product;
-			} catch (error) {
-				console.log(error);
-				return error;
-			}
+					console.log(newsHeadlines);
+					return newsHeadlines;
+				})
+				.catch(console.error);
 		}
 	},
 
