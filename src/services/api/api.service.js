@@ -43,8 +43,8 @@ module.exports = {
 				path: "/habitica/",
 				mappingPolicy: "restrict",
 				aliases: {
-					"GET /tasks/": "habitica.list",
-					"POST /task/sync/:gid": "habitica.syncTaskFromAsanaById"
+					"GET /tasks/": "habiticaTask.list",
+					"POST /task/sync/:gid": "habiticaTask.syncTaskFromAsanaById"
 				},
 				bodyParsers: {
 					json: true

@@ -157,7 +157,7 @@ module.exports = {
 			/**
 			 * Create Habitica task based on received asana events
 			 * @param { import('muleculer').Context } ctx - Molecular context.
-			 * @returns { import('../habitica/habitica.service').HabiticaTask) }
+			 * @returns { import('../habitica/habiticaTask.service').HabiticaTask) }
 			 */
 			handler(ctx) {
 				this.syncTasksByEvents(ctx.params.events);
@@ -201,7 +201,7 @@ module.exports = {
 		/**
 		 * Create Habitica task based on received asana events
 		 * @param { import('asana').resources.Events.Type[] } events
-		 * @returns { import('../habitica/habitica.service').HabiticaTask) }
+		 * @returns { import('../habitica/habiticaTask.service').HabiticaTask) }
 		 */
 		async syncTasksByEvents(events) {
 			try {
@@ -215,7 +215,7 @@ module.exports = {
 				}, []);
 				const tasks = await Promise.all(
 					uniqueIds.map(gid =>
-						this.broker.call("habitica.syncTaskFromAsanaById", {
+						this.broker.call("habiticaTask.syncTaskFromAsanaById", {
 							gid
 						})
 					)
