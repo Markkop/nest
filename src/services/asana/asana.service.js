@@ -1,6 +1,6 @@
 const Asana = require("asana");
 const { Errors } = require("moleculer");
-const { AsanaError } = require("../utils/errors");
+const { AsanaError } = require("../../utils/errors");
 const axios = require("axios");
 
 /**
@@ -157,7 +157,7 @@ module.exports = {
 			/**
 			 * Create Habitica task based on received asana events
 			 * @param { import('muleculer').Context } ctx - Molecular context.
-			 * @returns { import('./habitica.service').HabiticaTask) }
+			 * @returns { import('../habitica/habitica.service').HabiticaTask) }
 			 */
 			handler(ctx) {
 				this.syncTasksByEvents(ctx.params.events);
@@ -201,20 +201,14 @@ module.exports = {
 		/**
 		 * Create Habitica task based on received asana events
 		 * @param { import('asana').resources.Events.Type[] } events
-		 * @returns { import('./habitica.service').HabiticaTask) }
+		 * @returns { import('../habitica/habitica.service').HabiticaTask) }
 		 */
 		async syncTasksByEvents(events) {
 			try {
 				const uniqueIds = (events || []).reduce((taskIds, event) => {
 					this.logger.info("Received webhook event", event);
-					const taskId =
-						typeof event.resource === "object"
-							? event.resource.gid
-							: event.resource;
-					if (
-						event.resource.resource_type === "task" &&
-						!taskIds.includes(taskId)
-					) {
+					const taskId = typeof event.resource === "object" ? event.resource.gid : event.resource;
+					if (event.resource.resource_type === "task" && !taskIds.includes(taskId)) {
 						taskIds.push(taskId);
 					}
 					return taskIds;
@@ -228,10 +222,7 @@ module.exports = {
 				);
 				return tasks;
 			} catch (error) {
-				throw new AsanaError(
-					"There's been a problem with task sync",
-					error
-				);
+				throw new AsanaError("There's been a problem with task sync", error);
 			}
 		},
 
@@ -246,10 +237,7 @@ module.exports = {
 				const task = await this.client.tasks.findById(gid);
 				return task;
 			} catch (error) {
-				throw new AsanaError(
-					`There's been a problem finding the Asana task related to "${gid}"`,
-					error
-				);
+				throw new AsanaError(`There's been a problem finding the Asana task related to "${gid}"`, error);
 			}
 		},
 
@@ -295,17 +283,10 @@ module.exports = {
 		 */
 		async getWorkspaceByName(name) {
 			try {
-				const {
-					data: workspaces
-				} = await this.client.workspaces.findAll();
-				return (
-					workspaces.find(workspace => workspace.name === name) || {}
-				);
+				const { data: workspaces } = await this.client.workspaces.findAll();
+				return workspaces.find(workspace => workspace.name === name) || {};
 			} catch (error) {
-				throw new AsanaError(
-					`There's been an error finding the workspace ${name}`,
-					error
-				);
+				throw new AsanaError(`There's been an error finding the workspace ${name}`, error);
 			}
 		},
 
@@ -319,10 +300,7 @@ module.exports = {
 				const user = await this.client.users.me();
 				return user;
 			} catch (err) {
-				throw new Errors.MoleculerError(
-					"Could not find the Asana client user",
-					404
-				);
+				throw new Errors.MoleculerError("Could not find the Asana client user", 404);
 			}
 		},
 
@@ -341,10 +319,7 @@ module.exports = {
 				});
 				return webhooks;
 			} catch (error) {
-				throw new AsanaError(
-					"Could not get the workspace webhooks",
-					error
-				);
+				throw new AsanaError("Could not get the workspace webhooks", error);
 			}
 		}
 	},

@@ -1,7 +1,7 @@
 "use strict";
 
 const { ServiceBroker } = require("moleculer");
-const HabiticaService = require("../../../src/services/habitica.service");
+const HabiticaService = require("../../../src/services/habitica/habitica.service");
 const contentMock = require("../mocks/content.json");
 const axios = require("axios");
 const questActivityWebhookMock = require("../mocks/questActivityWebhook.json");
