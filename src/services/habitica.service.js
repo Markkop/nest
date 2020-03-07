@@ -38,6 +38,104 @@ const axios = require("axios");
  * @property { String } id
  */
 
+/**
+ * @typedef QuestInvited
+ * @property { 'questActivity' } webhookType
+ * @property { 'questInvited' } type
+ * @property { Object } group
+ * @property { String } group.id
+ * @property { String } group.name
+ * @property { Object } quest
+ * @property { String } quest.key
+ * @property { Object } user
+ * @property { String } user._id
+ */
+
+/**
+ * @typedef Quest
+ * @property { String } text
+ * @property { String } notes
+ * @property { String } completion
+ * @property { String } completionChat
+ * @property { Number } value
+ * @property { String } category
+ * @property { Object } boss
+ * @property { String } boss.name
+ * @property { Number } boss.hp
+ * @property { Number } boss.str
+ * @property { Number } boss.def
+ * @property { Object } boss.rage
+ * @property { Object } boss.desperation
+ * @property { Object } drop
+ * @property { String } drop.items
+ * @property { String } drop.gp
+ * @property { String } drop.exp
+ * @property { String } drop.key
+ */
+
+/**
+ * @typedef User
+ * @property { Object } auth
+ * @property { Object } achievements
+ * @property { Object } backer
+ * @property { Object } contributor
+ * @property { Object } purchased
+ * @property { Object } flags
+ * @property { Object } history
+ * @property { Object } items
+ * @property { Object } invitations
+ * @property { Object } party
+ * @property { Object } preferences
+ * @property { Object } profile
+ * @property { String } profile.name
+ * @property { Stats } stats
+ * @property { Object } inbox
+ * @property { Object } takssOrder
+ * @property { Array } challenges
+ * @property { Array } guilds
+ * @property { Number } _v
+ * @property { Number} balance
+ * @property { Number } loginIncentives
+ * @property { Number } invitesSent
+ * @property { Array } pinnedItemsOrder
+ * @property { String } _id
+ * @property { Array } pushDevices
+ * @property { Object } extra
+ * @property { Array } tags
+ * @property { Object } newMessages
+ * @property { String } lastCron
+ * @property { String } migration
+ * @property { Array } notifications
+ * @property { Array } webhooks
+ * @property { Object } _ABTests
+ * @property { String } _lastPushNotification
+ * @property { String } pinnedItems
+ * @property { Array } unpinnedItems
+ * @property { String } id
+ * @property { Boolean } needsCron
+ *
+ */
+
+/**
+ * @typedef Stats
+ * @property { Object } buffs
+ * @property { Object } training
+ * @property { Number } hp
+ * @property { Number } mp
+ * @property { Number } exp
+ * @property { Number } gp
+ * @property { Number } lvl
+ * @property { String } class
+ * @property { Number } points
+ * @property { Number } str
+ * @property { Number } con
+ * @property { Number } int
+ * @property { Number } per
+ * @property { Number } toNextLevel
+ * @property { Number } maxHealth
+ * @property { Number } maxMP
+ */
+
 module.exports = {
 	name: "habitica",
 
@@ -122,7 +220,8 @@ module.exports = {
 			},
 			handler(ctx) {
 				const eventMap = {
-					questInvited: () => this.onQuestInvite(ctx.params)
+					questInvited: () => this.onQuestInvite(ctx.params),
+					leveledUp: () => this.OnLevelUp(ctx.params)
 				};
 				return eventMap[ctx.params.type]();
 			}
@@ -201,44 +300,39 @@ module.exports = {
 	},
 
 	/**
-	 * @typedef QuestInvited
-	 * @property { 'questActivity' } webhookType
-	 * @property { 'questInvited' } type
-	 * @property { Object } group
-	 * @property { String } group.id
-	 * @property { String } group.name
-	 * @property { Object } quest
-	 * @property { String } quest.key
-	 * @property { Object } user
-	 * @property { String } user._id
-	 */
-
-	/**
-	 * @typedef Quest
-	 * @property { String } text
-	 * @property { String } notes
-	 * @property { String } completion
-	 * @property { String } completionChat
-	 * @property { Number } value
-	 * @property { String } category
-	 * @property { Object } boss
-	 * @property { String } boss.name
-	 * @property { Number } boss.hp
-	 * @property { Number } boss.str
-	 * @property { Number } boss.def
-	 * @property { Object } boss.rage
-	 * @property { Object } boss.desperation
-	 * @property { Object } drop
-	 * @property { String } drop.items
-	 * @property { String } drop.gp
-	 * @property { String } drop.exp
-	 * @property { String } drop.key
-	 */
-
-	/**
 	 * Methods.
 	 */
 	methods: {
+		/**
+		 * Get user informaton
+		 * @returns { User }
+		 */
+		async getUser() {
+			try {
+				const {
+					data: { data: user }
+				} = await this.axios.get("/user");
+				return user;
+			} catch (error) {
+				console.log(error);
+				return error;
+			}
+		},
+
+		/**
+		 * Events to happen when the webhook type is leveledUp
+		 * @returns  { HabiticaChatMessage }
+		 */
+		async OnLevelUp() {
+			const {
+				stats: { toNextLevel, lvl },
+				profile: { name }
+			} = await this.getUser();
+
+			const message = `${name} just leveled up! More ${toNextLevel} exp to reach level ${Number(lvl) + 1}`;
+			return this.createChatMessage(message);
+		},
+
 		/**
 		 * Events to happen when the webhook type is questInvited
 		 * @param { QuestInvited  } questInvitedData

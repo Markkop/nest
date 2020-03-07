@@ -1,0 +1,8 @@
+{
+	"webhookType": "userActivity",
+	"type": "leveledUp",
+	"user": {
+		"_id": "40387571-91ee-489e-960f-278bf8fd503b"
+	},
+	"something": true
+}
