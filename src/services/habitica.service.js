@@ -259,10 +259,7 @@ module.exports = {
 
 			if (collect) {
 				const items = Object.values(collect);
-				const totalCount = items.reduce(
-					(total, item) => total + item.count,
-					0
-				);
+				const totalCount = items.reduce((total, item) => total + item.count, 0);
 				message = `[ NEW QUEST ] ${quest.text} [${totalCount} items]`;
 			}
 			return this.createChatMessage(message);
@@ -417,10 +414,7 @@ module.exports = {
 				}
 
 				console.log(error);
-				throw new Error(
-					`There's been a problem finding the Habitica task related to "${id}"`,
-					error
-				);
+				throw new Error(`There's been a problem finding the Habitica task related to "${id}"`, error);
 			}
 		},
 
@@ -437,9 +431,7 @@ module.exports = {
 				const {
 					data: { data: tasks }
 				} = await this.axios.get("/tasks/user");
-				const existingTask = tasks.find(
-					task => task.notes && task.notes.includes(asanaTask.gid)
-				);
+				const existingTask = tasks.find(task => task.notes && task.notes.includes(asanaTask.gid));
 				if (existingTask) {
 					habiticaTask.id = existingTask.id;
 					habiticaTask._id = existingTask._id;
@@ -472,8 +464,7 @@ module.exports = {
 		 */
 		async readAllNotifications() {
 			const notifications = await this.getNotificationsFromHabitica();
-			const readNotificationById = async ({ id }) =>
-				this.axios.post(`/notifications/${id}/read `);
+			const readNotificationById = async ({ id }) => this.axios.post(`/notifications/${id}/read `);
 			return Promise.all(notifications.map(readNotificationById));
 		}
 	},
