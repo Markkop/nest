@@ -33,3 +33,7 @@ indent_size = 2
 
 [*.js]
 quote_type = "double"
+
+# Custom
+
+max_line_length = 120
