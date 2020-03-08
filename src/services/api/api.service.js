@@ -51,6 +51,16 @@ module.exports = {
 				}
 			},
 			{
+				path: "/scrapper/",
+				mappingPolicy: "restrict",
+				aliases: {
+					"GET /motorhome/": "scrapper.getMotorhome"
+				},
+				bodyParsers: {
+					json: true
+				}
+			},
+			{
 				mappingPolicy: "restrict",
 				path: "/status",
 				aliases: {
