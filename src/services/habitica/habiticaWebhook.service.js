@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios')
 
 /**
  * @typedef Webhook
@@ -27,7 +27,7 @@ const axios = require("axios");
  */
 
 module.exports = {
-	name: "habiticaWebhook",
+	name: 'habiticaWebhook',
 
 	mixins: [axios],
 
@@ -36,13 +36,13 @@ module.exports = {
 	 */
 	settings: {
 		axios: {
-			baseURL: "https://habitica.com/api/v3/",
+			baseURL: 'https://habitica.com/api/v3/',
 			timeout: 5000,
 			headers: {
-				"Content-Type": "application/json",
-				"x-api-user": `${process.env.HABITICA_USER}`,
-				"x-api-key": `${process.env.HABITICA_TOKEN}`,
-				"x-client": `${process.env.HABITICA_USER}-Testing`
+				'Content-Type': 'application/json',
+				'x-api-user': `${process.env.HABITICA_USER}`,
+				'x-api-key': `${process.env.HABITICA_TOKEN}`,
+				'x-client': `${process.env.HABITICA_USER}-Testing`
 			}
 		}
 	},
@@ -53,12 +53,12 @@ module.exports = {
 	actions: {
 		create: {
 			params: {
-				id: { type: "string", optional: true },
-				url: { type: "string" },
-				lable: { type: "string", optional: true },
-				enable: { type: "boolean", optional: true },
-				type: { type: "string", optional: true },
-				options: { type: "object", optional: true }
+				id: { type: 'string', optional: true },
+				url: { type: 'string' },
+				lable: { type: 'string', optional: true },
+				enable: { type: 'boolean', optional: true },
+				type: { type: 'string', optional: true },
+				options: { type: 'object', optional: true }
 			},
 			/**
 			 * Creates a new webook
@@ -66,18 +66,18 @@ module.exports = {
 			 * @returns { Webhook }
 			 */
 			handler(ctx) {
-				return this.createWebhook(ctx.params);
+				return this.createWebhook(ctx.params)
 			}
 		},
 
 		delete: {
 			params: {
-				id: { type: "string" },
-				url: { type: "string", optional: true },
-				lable: { type: "string", optional: true },
-				enable: { type: "boolean", optional: true },
-				type: { type: "string", optional: true },
-				options: { type: "object", optional: true }
+				id: { type: 'string' },
+				url: { type: 'string', optional: true },
+				lable: { type: 'string', optional: true },
+				enable: { type: 'boolean', optional: true },
+				type: { type: 'string', optional: true },
+				options: { type: 'object', optional: true }
 			},
 			/**
 			 * Deletes a Webhook
@@ -86,18 +86,18 @@ module.exports = {
 			 * @returns { Webhook[] } User's webhooks
 			 */
 			handler(ctx) {
-				return this.deleteWebhook(ctx.params.id);
+				return this.deleteWebhook(ctx.params.id)
 			}
 		},
 
 		update: {
 			params: {
-				id: { type: "string" },
-				url: { type: "string", optional: true },
-				lable: { type: "string", optional: true },
-				enable: { type: "boolean", optional: true },
-				type: { type: "string", optional: true },
-				options: { type: "object", optional: true }
+				id: { type: 'string' },
+				url: { type: 'string', optional: true },
+				lable: { type: 'string', optional: true },
+				enable: { type: 'boolean', optional: true },
+				type: { type: 'string', optional: true },
+				options: { type: 'object', optional: true }
 			},
 			/**
 			 * Updates a Webhook
@@ -106,9 +106,9 @@ module.exports = {
 			 * @returns { Webhook } Habitica updated Webhook.
 			 */
 			handler(ctx) {
-				const id = ctx.params.id;
-				delete ctx.params.id;
-				return this.updateWebhook(id, { ...ctx.params });
+				const id = ctx.params.id
+				delete ctx.params.id
+				return this.updateWebhook(id, { ...ctx.params })
 			}
 		},
 
@@ -120,7 +120,7 @@ module.exports = {
 			 * @returns { Webhook[] } webhooks
 			 */
 			handler(ctx) {
-				return this.listHabiticaWebhooks();
+				return this.listHabiticaWebhooks()
 			}
 		}
 	},
@@ -137,8 +137,8 @@ module.exports = {
 		async createWebhook(webhook) {
 			const {
 				data: { data: responseWebhook }
-			} = await this.axios.post("/user/webhook", webhook);
-			return responseWebhook;
+			} = await this.axios.post('/user/webhook', webhook)
+			return responseWebhook
 		},
 
 		/**
@@ -150,8 +150,8 @@ module.exports = {
 		async updateWebhook(id, webhook) {
 			const {
 				data: { data: responseWebhook }
-			} = await this.axios.put(`/user/webhook/${id}`, webhook);
-			return responseWebhook;
+			} = await this.axios.put(`/user/webhook/${id}`, webhook)
+			return responseWebhook
 		},
 
 		/**
@@ -162,8 +162,8 @@ module.exports = {
 		async deleteWebhook(id) {
 			const {
 				data: { data: webhooks }
-			} = await this.axios.delete(`/user/webhook/${id}`);
-			return webhooks;
+			} = await this.axios.delete(`/user/webhook/${id}`)
+			return webhooks
 		},
 
 		/**
@@ -173,8 +173,8 @@ module.exports = {
 		async listHabiticaWebhooks() {
 			const {
 				data: { data: webhooks }
-			} = await this.axios.get("/user/webhook");
-			return webhooks;
+			} = await this.axios.get('/user/webhook')
+			return webhooks
 		}
 	},
 
@@ -186,7 +186,7 @@ module.exports = {
 			baseURL: this.settings.axios.baseURL,
 			timeout: this.settings.axios.timeout,
 			headers: this.settings.axios.headers
-		});
+		})
 	},
 
 	/**
@@ -198,4 +198,4 @@ module.exports = {
 	 * Service stopped lifecycle event handler.
 	 */
 	stopped() {}
-};
+}

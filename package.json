@@ -10,7 +10,7 @@
     "cli": "moleculer connect ",
     "ci": "jest --watch",
     "test": "jest --coverage",
-    "lint": "eslint services"
+    "lint": "eslint ."
   },
   "keywords": [
     "microservices",

@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios')
 
 /**
  * @typedef HabiticaTask
@@ -19,7 +19,7 @@ const axios = require("axios");
  */
 
 module.exports = {
-	name: "habiticaTask",
+	name: 'habiticaTask',
 
 	mixins: [axios],
 
@@ -28,13 +28,13 @@ module.exports = {
 	 */
 	settings: {
 		axios: {
-			baseURL: "https://habitica.com/api/v3/",
+			baseURL: 'https://habitica.com/api/v3/',
 			timeout: 5000,
 			headers: {
-				"Content-Type": "application/json",
-				"x-api-user": `${process.env.HABITICA_USER}`,
-				"x-api-key": `${process.env.HABITICA_TOKEN}`,
-				"x-client": `${process.env.HABITICA_USER}-Testing`
+				'Content-Type': 'application/json',
+				'x-api-user': `${process.env.HABITICA_USER}`,
+				'x-api-key': `${process.env.HABITICA_TOKEN}`,
+				'x-client': `${process.env.HABITICA_USER}-Testing`
 			}
 		}
 	},
@@ -51,7 +51,7 @@ module.exports = {
 			 * @returns { HabiticaTask } Habitica created task.
 			 */
 			handler(ctx) {
-				return this.createTask(ctx.params);
+				return this.createTask(ctx.params)
 			}
 		},
 
@@ -63,7 +63,7 @@ module.exports = {
 			 * @returns { HabiticaTask } Habitica updated task.
 			 */
 			handler(ctx) {
-				return this.updateTask(ctx.params);
+				return this.updateTask(ctx.params)
 			}
 		},
 
@@ -75,7 +75,7 @@ module.exports = {
 			 * @returns { HabiticaTask[] } Habitica tasks
 			 */
 			handler(ctx) {
-				return this.listTasks();
+				return this.listTasks()
 			}
 		},
 
@@ -84,7 +84,7 @@ module.exports = {
 		 */
 		syncTaskFromAsanaById: {
 			params: {
-				gid: { type: "string" }
+				gid: { type: 'string' }
 			},
 
 			/**
@@ -94,14 +94,14 @@ module.exports = {
 			 * @returns { HabiticaTask } Habitica created or updated task.
 			 */
 			handler(ctx) {
-				const response = this.syncTaskFromAsanaById(ctx.params.gid);
-				return response;
+				const response = this.syncTaskFromAsanaById(ctx.params.gid)
+				return response
 			}
 		},
 
 		getTaskById: {
 			params: {
-				taskId: { type: "string" }
+				taskId: { type: 'string' }
 			},
 
 			/**
@@ -111,8 +111,8 @@ module.exports = {
 			 * @returns { HabiticaTask } Habitica  task.
 			 */
 			handler(ctx) {
-				const response = this.getTaskById(ctx.params.taskId);
-				return response;
+				const response = this.getTaskById(ctx.params.taskId)
+				return response
 			}
 		}
 	},
@@ -129,11 +129,11 @@ module.exports = {
 			try {
 				const {
 					data: { data: tasks }
-				} = await this.axios.get("/tasks/user");
-				return tasks;
+				} = await this.axios.get('/tasks/user')
+				return tasks
 			} catch (error) {
-				console.log(error);
-				return [{ error }];
+				console.log(error)
+				return [{ error }]
 			}
 		},
 
@@ -147,11 +147,11 @@ module.exports = {
 			try {
 				const {
 					data: { data: task }
-				} = await this.axios.put(`/tasks/${taskData.id}`, taskData);
-				return task;
+				} = await this.axios.put(`/tasks/${taskData.id}`, taskData)
+				return task
 			} catch (error) {
-				console.log(error);
-				return error;
+				console.log(error)
+				return error
 			}
 		},
 
@@ -165,11 +165,11 @@ module.exports = {
 			try {
 				const {
 					data: { data: task }
-				} = await this.axios.post("/tasks/user", taskData);
-				return task;
+				} = await this.axios.post('/tasks/user', taskData)
+				return task
 			} catch (error) {
-				console.log(error);
-				return error;
+				console.log(error)
+				return error
 			}
 		},
 
@@ -180,18 +180,18 @@ module.exports = {
 		 * @returns { Promise.<HabiticaTask> }
 		 */
 		async syncTaskFromAsanaById(gid) {
-			const asanaTask = await this.broker.call("asana.getAsanaTaskById", {
+			const asanaTask = await this.broker.call('asana.getAsanaTaskById', {
 				gid
-			});
+			})
 
-			const { assignee } = asanaTask;
+			const { assignee } = asanaTask
 			if (!assignee || assignee.gid !== process.env.ASSIGNEE_GID) {
-				return { syncd: "not" };
+				return { syncd: 'not' }
 			}
 
-			const syncdTask = await this.deduplicateTask(asanaTask);
-			this.logger.info("Synchronized task", syncdTask.id);
-			return syncdTask;
+			const syncdTask = await this.deduplicateTask(asanaTask)
+			this.logger.info('Synchronized task', syncdTask.id)
+			return syncdTask
 		},
 
 		/**
@@ -201,18 +201,18 @@ module.exports = {
 		 * @returns { HabiticaTask } Habitica task.
 		 */
 		parseTaskFromAsana(asanaTask) {
-			const { name, due_on, gid, projects, created_at } = asanaTask;
-			const project = projects[0] && projects[0].gid;
+			const { name, due_on, gid, projects, created_at } = asanaTask
+			const project = projects[0] && projects[0].gid
 			const habiticaTask = {
 				gid,
 				text: name,
-				type: "todo",
+				type: 'todo',
 				date: due_on,
 				notes: `[Ir para a task](https://app.asana.com/0/${project}/${gid})`,
 				priority: 2,
 				createdAt: created_at
-			};
-			return habiticaTask;
+			}
+			return habiticaTask
 		},
 
 		/**
@@ -225,18 +225,18 @@ module.exports = {
 			try {
 				const {
 					data: { data: task }
-				} = await this.axios.get(`/tasks/${id}`);
-				return task;
+				} = await this.axios.get(`/tasks/${id}`)
+				return task
 			} catch (error) {
-				const { response } = error;
+				const { response } = error
 
 				if (response && response.status === 404) {
-					console.log(response.data.message);
-					return null;
+					console.log(response.data.message)
+					return null
 				}
 
-				console.log(error);
-				throw new Error(`There's been a problem finding the Habitica task related to "${id}"`, error);
+				console.log(error)
+				throw new Error(`There's been a problem finding the Habitica task related to "${id}"`, error)
 			}
 		},
 
@@ -249,21 +249,21 @@ module.exports = {
 		 */
 		async deduplicateTask(asanaTask) {
 			try {
-				const habiticaTask = this.parseTaskFromAsana(asanaTask);
+				const habiticaTask = this.parseTaskFromAsana(asanaTask)
 				const {
 					data: { data: tasks }
-				} = await this.axios.get("/tasks/user");
-				const existingTask = tasks.find(task => task.notes && task.notes.includes(asanaTask.gid));
+				} = await this.axios.get('/tasks/user')
+				const existingTask = tasks.find(task => task.notes && task.notes.includes(asanaTask.gid))
 				if (existingTask) {
-					habiticaTask.id = existingTask.id;
-					habiticaTask._id = existingTask._id;
-					return this.updateTask(habiticaTask);
+					habiticaTask.id = existingTask.id
+					habiticaTask._id = existingTask._id
+					return this.updateTask(habiticaTask)
 				}
 
-				return this.createTask(habiticaTask);
+				return this.createTask(habiticaTask)
 			} catch (error) {
-				const { message } = error;
-				throw new Error(`Could not sync task: ${message}`, error);
+				const { message } = error
+				throw new Error(`Could not sync task: ${message}`, error)
 			}
 		}
 	},
@@ -276,7 +276,7 @@ module.exports = {
 			baseURL: this.settings.axios.baseURL,
 			timeout: this.settings.axios.timeout,
 			headers: this.settings.axios.headers
-		});
+		})
 	},
 
 	/**
@@ -288,4 +288,4 @@ module.exports = {
 	 * Service stopped lifecycle event handler.
 	 */
 	stopped() {}
-};
+}

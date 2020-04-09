@@ -6,20 +6,20 @@ module.exports = {
 		es6: true,
 		jquery: false,
 		jest: true,
-		jasmine: true
+		jasmine: true,
 	},
-	extends: 'eslint:recommended',
+	extends: "eslint:recommended",
 	parserOptions: {
-		sourceType: 'module',
-		ecmaVersion: '2018'
+		sourceType: "module",
+		ecmaVersion: "2018",
 	},
 	rules: {
-		indent: ['warn', 'tab', { SwitchCase: 1 }],
-		quotes: ['warn', 'double'],
-		semi: ['error', 'always'],
-		'no-var': ['error'],
-		'no-console': ['off'],
-		'no-unused-vars': ['warn'],
-		'no-mixed-spaces-and-tabs': ['warn']
-	}
+		indent: ["warn", "tab", { SwitchCase: 1 }],
+		quotes: ["warn", "single"],
+		semi: ["error", "never"],
+		"no-var": ["error"],
+		"no-console": ["off"],
+		"no-unused-vars": ["warn"],
+		"no-mixed-spaces-and-tabs": ["warn"],
+	},
 };

@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios')
 
 /**
  * @typedef HabiticaChatMessage
@@ -107,7 +107,7 @@ const axios = require("axios");
  */
 
 module.exports = {
-	name: "habitica",
+	name: 'habitica',
 
 	mixins: [axios],
 
@@ -116,13 +116,13 @@ module.exports = {
 	 */
 	settings: {
 		axios: {
-			baseURL: "https://habitica.com/api/v3/",
+			baseURL: 'https://habitica.com/api/v3/',
 			timeout: 5000,
 			headers: {
-				"Content-Type": "application/json",
-				"x-api-user": `${process.env.HABITICA_USER}`,
-				"x-api-key": `${process.env.HABITICA_TOKEN}`,
-				"x-client": `${process.env.HABITICA_USER}-Testing`
+				'Content-Type': 'application/json',
+				'x-api-user': `${process.env.HABITICA_USER}`,
+				'x-api-key': `${process.env.HABITICA_TOKEN}`,
+				'x-client': `${process.env.HABITICA_USER}-Testing`
 			}
 		}
 	},
@@ -138,8 +138,8 @@ module.exports = {
 			 * @returns { Object } params
 			 */
 			handler(ctx) {
-				this.logger.info(ctx.params);
-				return ctx.params;
+				this.logger.info(ctx.params)
+				return ctx.params
 			}
 		},
 
@@ -150,14 +150,14 @@ module.exports = {
 			 * @returns { Any }
 			 */
 			params: {
-				type: { type: "string" }
+				type: { type: 'string' }
 			},
 			handler(ctx) {
 				const eventMap = {
 					questInvited: () => this.onQuestInvite(ctx.params),
 					leveledUp: () => this.OnLevelUp(ctx.params)
-				};
-				return eventMap[ctx.params.type]();
+				}
+				return eventMap[ctx.params.type]()
 			}
 		},
 
@@ -168,7 +168,7 @@ module.exports = {
 		 */
 		createChatMessage: {
 			handler(ctx) {
-				return this.createChatMessage(ctx.params.message);
+				return this.createChatMessage(ctx.params.message)
 			}
 		}
 	},
@@ -185,11 +185,11 @@ module.exports = {
 			try {
 				const {
 					data: { data: user }
-				} = await this.axios.get("/user");
-				return user;
+				} = await this.axios.get('/user')
+				return user
 			} catch (error) {
-				console.log(error);
-				return error;
+				console.log(error)
+				return error
 			}
 		},
 
@@ -201,10 +201,10 @@ module.exports = {
 			const {
 				stats: { toNextLevel, lvl },
 				profile: { name }
-			} = await this.getUser();
+			} = await this.getUser()
 
-			const message = `${name} just leveled up! More ${toNextLevel} exp to reach level ${Number(lvl) + 1}`;
-			return this.createChatMessage(message);
+			const message = `${name} just leveled up! More ${toNextLevel} exp to reach level ${Number(lvl) + 1}`
+			return this.createChatMessage(message)
 		},
 
 		/**
@@ -215,22 +215,22 @@ module.exports = {
 		async onQuestInvite(questInvitedData) {
 			const {
 				quest: { key: questId }
-			} = questInvitedData;
-			const quest = await this.getQuest(questId);
-			const { boss, collect } = quest;
-			let message = "";
+			} = questInvitedData
+			const quest = await this.getQuest(questId)
+			const { boss, collect } = quest
+			let message = ''
 
 			if (boss) {
-				const { hp } = boss;
-				message = `[ NEW QUEST ] ${quest.text} [HP ${hp}/${hp}]`;
+				const { hp } = boss
+				message = `[ NEW QUEST ] ${quest.text} [HP ${hp}/${hp}]`
 			}
 
 			if (collect) {
-				const items = Object.values(collect);
-				const totalCount = items.reduce((total, item) => total + item.count, 0);
-				message = `[ NEW QUEST ] ${quest.text} [${totalCount} items]`;
+				const items = Object.values(collect)
+				const totalCount = items.reduce((total, item) => total + item.count, 0)
+				message = `[ NEW QUEST ] ${quest.text} [${totalCount} items]`
 			}
-			return this.createChatMessage(message);
+			return this.createChatMessage(message)
 		},
 
 		/**
@@ -244,10 +244,10 @@ module.exports = {
 					data: {
 						data: { quests }
 					}
-				} = await this.axios.get("/content");
-				return quests && quests[questId];
+				} = await this.axios.get('/content')
+				return quests && quests[questId]
 			} catch (error) {
-				console.log(error);
+				console.log(error)
 			}
 		},
 
@@ -260,14 +260,14 @@ module.exports = {
 			try {
 				const {
 					data: { data: responseData }
-				} = await this.axios.post("/groups/party/chat", { message });
+				} = await this.axios.post('/groups/party/chat', { message })
 				const {
 					message: { id, user, text }
-				} = responseData;
-				const messageCreated = { id, user, text };
-				return messageCreated;
+				} = responseData
+				const messageCreated = { id, user, text }
+				return messageCreated
 			} catch (error) {
-				this.logger.error(error);
+				this.logger.error(error)
 			}
 		}
 	},
@@ -280,7 +280,7 @@ module.exports = {
 			baseURL: this.settings.axios.baseURL,
 			timeout: this.settings.axios.timeout,
 			headers: this.settings.axios.headers
-		});
+		})
 	},
 
 	/**
@@ -292,4 +292,4 @@ module.exports = {
 	 * Service stopped lifecycle event handler.
 	 */
 	stopped() {}
-};
+}
