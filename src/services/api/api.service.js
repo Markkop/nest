@@ -61,6 +61,17 @@ module.exports = {
 				bodyParsers: {
 					json: true
 				}
+			},
+			{
+				mappingPolicy: 'restrict',
+				path: '/mocks',
+				aliases: {
+					'GET /products': 'mocks.getProducts',
+					'GET /product/:id': 'mocks.getProductById',
+				},
+				bodyParsers: {
+					json: true
+				}
 			}
 		]
 	},
