@@ -71,7 +71,12 @@ module.exports = {
 				},
 				bodyParsers: {
 					json: true
-				}
+				},
+				cors: {
+					origin: ['http://localhost:3000', 'https://fashionista-markkop.netlify.com' ],
+					methods: ['GET'],
+					credentials: false
+				},
 			}
 		]
 	},
