@@ -1,7 +1,7 @@
-const Asana = require("asana");
-const { Errors } = require("moleculer");
-const { AsanaError } = require("../../utils/errors");
-const axios = require("axios");
+const Asana = require('asana')
+const { Errors } = require('moleculer')
+const { AsanaError } = require('../../utils/errors')
+const axios = require('axios')
 
 /**
  * @typedef AsanaWebhook
@@ -13,25 +13,25 @@ const axios = require("axios");
  */
 
 module.exports = {
-	name: "asana",
+	name: 'asana',
 
 	/**
 	 * Service settings.
 	 */
 	settings: {
-		$secureSettings: ["asana.token", "axios.headers.Authorization"],
+		$secureSettings: ['asana.token', 'axios.headers.Authorization'],
 		asana: {
 			headers: {
-				"asana-enable": "string_ids,new_sections"
+				'asana-enable': 'string_ids,new_sections'
 			},
 			workspace: process.env.WORKSPACE,
 			token: process.env.ASANA_TOKEN
 		},
 		axios: {
-			baseURL: "https://app.asana.com/api/1.0/",
+			baseURL: 'https://app.asana.com/api/1.0/',
 			timeout: 5000,
 			headers: {
-				Accept: "application/json",
+				Accept: 'application/json',
 				Authorization: `Bearer ${process.env.ASANA_TOKEN}`
 			}
 		}
@@ -46,15 +46,15 @@ module.exports = {
 			 * Task schema validation.
 			 */
 			params: {
-				name: { type: "string" },
-				notes: { type: "string", optional: true },
+				name: { type: 'string' },
+				notes: { type: 'string', optional: true },
 				memberships: {
-					type: "array",
+					type: 'array',
 					items: {
-						type: "object",
+						type: 'object',
 						props: {
-							project: { type: "string" },
-							section: { type: "string" }
+							project: { type: 'string' },
+							section: { type: 'string' }
 						}
 					}
 				}
@@ -66,14 +66,14 @@ module.exports = {
 			 * @returns { Promise.<import('asana').resources.Tasks.Type> } Asana created task.
 			 */
 			handler(ctx) {
-				return this.createTask(ctx.params);
+				return this.createTask(ctx.params)
 			}
 		},
 
 		update: {
 			params: {
-				id: { type: "string" },
-				data: { type: "object" }
+				id: { type: 'string' },
+				data: { type: 'object' }
 			},
 			/**
 			 * Updates a task based on its id.
@@ -82,13 +82,13 @@ module.exports = {
 			 * @returns { Promise.<import('asana').resources.Tasks.Type> } Asana updated task.
 			 */
 			handler(ctx) {
-				return this.updateTask(ctx.params.id, ctx.params.data);
+				return this.updateTask(ctx.params.id, ctx.params.data)
 			}
 		},
 
 		remove: {
 			params: {
-				id: { type: "string" }
+				id: { type: 'string' }
 			},
 			/**
 			 * Deletes a task based on its id.
@@ -97,7 +97,7 @@ module.exports = {
 			 * @returns { Promise.<void> } Promise to delete action.
 			 */
 			handler(ctx) {
-				return this.deleteTask(ctx.params.id);
+				return this.deleteTask(ctx.params.id)
 			}
 		},
 
@@ -108,13 +108,13 @@ module.exports = {
 			 * @returns { Promise.<import('asana').resources.Users.Type> } Asana User Type.
 			 */
 			handler() {
-				return this.getUser();
+				return this.getUser()
 			}
 		},
 
 		workspace: {
 			params: {
-				name: { type: "string" }
+				name: { type: 'string' }
 			},
 			/**
 			 * Finds any workspace matching the given name.
@@ -123,7 +123,7 @@ module.exports = {
 			 * @returns { Promise.<import('asana').resources.Workspaces.Type> } Asana workspace.
 			 */
 			handler(ctx) {
-				return this.getWorkspaceByName(ctx.params.name);
+				return this.getWorkspaceByName(ctx.params.name)
 			}
 		},
 
@@ -134,13 +134,13 @@ module.exports = {
 			 * @returns { import('asana').resources.Projects.Type[] } - List of workspace projects.
 			 */
 			handler() {
-				return this.getWorkspaceProjects();
+				return this.getWorkspaceProjects()
 			}
 		},
 
 		sections: {
 			params: {
-				project: { type: "string" }
+				project: { type: 'string' }
 			},
 			/**
 			 * Get all sections from a given Asana project.
@@ -149,7 +149,7 @@ module.exports = {
 			 * @returns { import('asana').resources.Sections.Type[] } Asana sections.
 			 */
 			handler(ctx) {
-				return this.client.sections.findByProject(ctx.params.project);
+				return this.client.sections.findByProject(ctx.params.project)
 			}
 		},
 
@@ -160,8 +160,8 @@ module.exports = {
 			 * @returns { import('../habitica/habiticaTask.service').HabiticaTask) }
 			 */
 			handler(ctx) {
-				this.syncTasksByEvents(ctx.params.events);
-				return { ack: true };
+				this.syncTasksByEvents(ctx.params.events)
+				return { ack: true }
 			}
 		},
 
@@ -172,13 +172,13 @@ module.exports = {
 			 * @returns { AsanaWebhook } Asana webhook
 			 */
 			handler(ctx) {
-				return this.getWorkspaceWebhooks();
+				return this.getWorkspaceWebhooks()
 			}
 		},
 
 		getAsanaTaskById: {
 			params: {
-				gid: { type: "string" }
+				gid: { type: 'string' }
 			},
 			/**
 			 * Get Asana task by Id.
@@ -187,9 +187,9 @@ module.exports = {
 			 * @returns { import('asana').resources.Tasks.Type } Asana task.
 			 */
 			handler(ctx) {
-				const gid = Number(ctx.params.gid);
-				const asanaTask = this.getAsanaTaskById(gid);
-				return asanaTask;
+				const gid = Number(ctx.params.gid)
+				const asanaTask = this.getAsanaTaskById(gid)
+				return asanaTask
 			}
 		}
 	},
@@ -206,23 +206,23 @@ module.exports = {
 		async syncTasksByEvents(events) {
 			try {
 				const uniqueIds = (events || []).reduce((taskIds, event) => {
-					this.logger.info("Received webhook event", event);
-					const taskId = typeof event.resource === "object" ? event.resource.gid : event.resource;
-					if (event.resource.resource_type === "task" && !taskIds.includes(taskId)) {
-						taskIds.push(taskId);
+					this.logger.info('Received webhook event', event)
+					const taskId = typeof event.resource === 'object' ? event.resource.gid : event.resource
+					if (event.resource.resource_type === 'task' && !taskIds.includes(taskId)) {
+						taskIds.push(taskId)
 					}
-					return taskIds;
-				}, []);
+					return taskIds
+				}, [])
 				const tasks = await Promise.all(
 					uniqueIds.map(gid =>
-						this.broker.call("habiticaTask.syncTaskFromAsanaById", {
+						this.broker.call('habiticaTask.syncTaskFromAsanaById', {
 							gid
 						})
 					)
-				);
-				return tasks;
+				)
+				return tasks
 			} catch (error) {
-				throw new AsanaError("There's been a problem with task sync", error);
+				throw new AsanaError('There\'s been a problem with task sync', error)
 			}
 		},
 
@@ -234,10 +234,10 @@ module.exports = {
 		 */
 		async getAsanaTaskById(gid) {
 			try {
-				const task = await this.client.tasks.findById(gid);
-				return task;
+				const task = await this.client.tasks.findById(gid)
+				return task
 			} catch (error) {
-				throw new AsanaError(`There's been a problem finding the Asana task related to "${gid}"`, error);
+				throw new AsanaError(`There's been a problem finding the Asana task related to "${gid}"`, error)
 			}
 		},
 
@@ -252,10 +252,10 @@ module.exports = {
 				const asanaTask = await this.client.tasks.create({
 					workspace: this.settings.asana.workspace,
 					...taskData
-				});
-				return asanaTask;
+				})
+				return asanaTask
 			} catch (error) {
-				throw new AsanaError("Could not create Asana task", error);
+				throw new AsanaError('Could not create Asana task', error)
 			}
 		},
 
@@ -268,10 +268,10 @@ module.exports = {
 		 */
 		async updateTask(gid, taskData) {
 			try {
-				const asanaTask = await this.client.tasks.update(gid, taskData);
-				return asanaTask;
+				const asanaTask = await this.client.tasks.update(gid, taskData)
+				return asanaTask
 			} catch (error) {
-				throw new AsanaError("Could not update Asana task", error);
+				throw new AsanaError('Could not update Asana task', error)
 			}
 		},
 
@@ -283,10 +283,10 @@ module.exports = {
 		 */
 		async getWorkspaceByName(name) {
 			try {
-				const { data: workspaces } = await this.client.workspaces.findAll();
-				return workspaces.find(workspace => workspace.name === name) || {};
+				const { data: workspaces } = await this.client.workspaces.findAll()
+				return workspaces.find(workspace => workspace.name === name) || {}
 			} catch (error) {
-				throw new AsanaError(`There's been an error finding the workspace ${name}`, error);
+				throw new AsanaError(`There's been an error finding the workspace ${name}`, error)
 			}
 		},
 
@@ -297,10 +297,10 @@ module.exports = {
 		 */
 		async getUser() {
 			try {
-				const user = await this.client.users.me();
-				return user;
+				const user = await this.client.users.me()
+				return user
 			} catch (err) {
-				throw new Errors.MoleculerError("Could not find the Asana client user", 404);
+				throw new Errors.MoleculerError('Could not find the Asana client user', 404)
 			}
 		},
 
@@ -312,14 +312,14 @@ module.exports = {
 			try {
 				const {
 					data: { data: webhooks }
-				} = await this.axios.get("/webhooks", {
+				} = await this.axios.get('/webhooks', {
 					params: {
 						workspace: this.settings.asana.workspace
 					}
-				});
-				return webhooks;
+				})
+				return webhooks
 			} catch (error) {
-				throw new AsanaError("Could not get the workspace webhooks", error);
+				throw new AsanaError('Could not get the workspace webhooks', error)
 			}
 		}
 	},
@@ -330,13 +330,13 @@ module.exports = {
 	created() {
 		this.client = Asana.Client.create({
 			defaultHeaders: this.settings.asana.headers
-		}).useAccessToken(this.settings.asana.token);
-		this.client.dispatcher.retryOnRateLimit = true;
+		}).useAccessToken(this.settings.asana.token)
+		this.client.dispatcher.retryOnRateLimit = true
 		this.axios = axios.create({
 			baseURL: this.settings.axios.baseURL,
 			timeout: this.settings.axios.timeout,
 			headers: this.settings.axios.headers
-		});
+		})
 	},
 
 	/**
@@ -348,4 +348,4 @@ module.exports = {
 	 * Service stopped lifecycle event handler.
 	 */
 	stopped() {}
-};
+}

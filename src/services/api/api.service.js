@@ -1,62 +1,73 @@
-const ApiGateway = require("moleculer-web");
+const ApiGateway = require('moleculer-web')
 
 module.exports = {
-	name: "Api",
+	name: 'Api',
 	mixins: [ApiGateway],
 
 	// More info about settings: https://moleculer.services/docs/0.13/moleculer-web.html
 	settings: {
 		port: process.env.PORT || 3040,
-		path: "/api",
+		path: '/api',
 		routes: [
 			{
-				path: "/webhooks",
-				mappingPolicy: "restrict",
+				path: '/webhooks',
+				mappingPolicy: 'restrict',
 				aliases: {
-					"POST /tasks": [
+					'POST /tasks': [
 						function asanaWebhookHandshake(req, res, next) {
-							const hookSecret = req.headers["x-hook-secret"];
+							const hookSecret = req.headers['x-hook-secret']
 							if (hookSecret) {
-								res.setHeader("X-Hook-Secret", hookSecret);
+								res.setHeader('X-Hook-Secret', hookSecret)
 							}
-							return next();
+							return next()
 						},
-						"asana.syncByEvents"
+						'asana.syncByEvents'
 					],
-					"POST /habitica": "habitica.onWebhookTrigger"
+					'POST /habitica': 'habitica.onWebhookTrigger'
 				},
 				bodyParsers: {
 					json: true
 				}
 			},
 			{
-				path: "/asana/",
-				mappingPolicy: "restrict",
+				path: '/asana/',
+				mappingPolicy: 'restrict',
 				aliases: {
-					"GET /:startDate/:endDate": "asana.getTasksByDateRange"
+					'GET /:startDate/:endDate': 'asana.getTasksByDateRange'
 				},
 				bodyParsers: {
 					json: true
 				}
 			},
 			{
-				path: "/habitica/",
-				mappingPolicy: "restrict",
+				path: '/habitica/',
+				mappingPolicy: 'restrict',
 				aliases: {
-					"GET /tasks/": "habiticaTask.list",
-					"POST /task/sync/:gid": "habiticaTask.syncTaskFromAsanaById"
+					'GET /tasks/': 'habiticaTask.list',
+					'POST /task/sync/:gid': 'habiticaTask.syncTaskFromAsanaById'
 				},
 				bodyParsers: {
 					json: true
 				}
 			},
 			{
-				mappingPolicy: "restrict",
-				path: "/status",
+				mappingPolicy: 'restrict',
+				path: '/status',
 				aliases: {
-					"GET /"(req, res) {
-						res.end(JSON.stringify({ alive: true }));
+					'GET /'(req, res) {
+						res.end(JSON.stringify({ alive: true }))
 					}
+				},
+				bodyParsers: {
+					json: true
+				}
+			},
+			{
+				mappingPolicy: 'restrict',
+				path: '/mocks',
+				aliases: {
+					'GET /products': 'mocks.getProducts',
+					'GET /product/:id': 'mocks.getProductById',
 				},
 				bodyParsers: {
 					json: true
@@ -66,4 +77,4 @@ module.exports = {
 	},
 
 	methods: {}
-};
+}

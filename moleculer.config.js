@@ -1,5 +1,5 @@
-"use strict";
-require("dotenv").config();
+'use strict'
+require('dotenv').config()
 
 /**
  * Moleculer ServiceBroker configuration file
@@ -28,7 +28,7 @@ require("dotenv").config();
  */
 module.exports = {
 	// Namespace of nodes to segment your nodes on the same network.
-	namespace: "nest",
+	namespace: 'nest',
 
 	// Unique node identifier. Must be unique in a namespace.
 	nodeID: `nest-${process.pid}`,
@@ -37,10 +37,10 @@ module.exports = {
 	logger: true,
 
 	// Log level for built-in console logger. Available values: trace, debug, info, warn, error, fatal
-	logLevel: "info",
+	logLevel: 'info',
 
 	// Log formatter for built-in console logger. Available values: default, simple, short. It can be also a `Function`.
-	logFormatter: "default",
+	logFormatter: 'default',
 
 	// Custom object & array printer for built-in console logger.
 	logObjectPrinter: null,
@@ -55,7 +55,7 @@ module.exports = {
 	// Define a serializer.
 	// Available values: "JSON", "Avro", "ProtoBuf", "MsgPack", "Notepack", "Thrift".
 	// More info: https://moleculer.services/docs/0.13/networking.html
-	serializer: "JSON",
+	serializer: 'JSON',
 
 	// Number of milliseconds to wait before reject a request with a RequestTimeout error. Disabled: 0
 	requestTimeout: 10 * 1000,
@@ -102,7 +102,7 @@ module.exports = {
 	registry: {
 		// Define balancing strategy. More info: https://moleculer.services/docs/0.14/balancing.html
 		// Available values: "RoundRobin", "Random", "CpuUsage", "Latency", "Shard"
-		strategy: "RoundRobin",
+		strategy: 'RoundRobin',
 		// Enable local action call preferring. Always call the local action instance if available.
 		preferLocal: true
 	},
@@ -143,12 +143,12 @@ module.exports = {
 		enabled: false,
 		// Available built-in reporters: "Console", "CSV", "Event", "Prometheus", "Datadog", "StatsD"
 		reporter: {
-			type: "Prometheus",
+			type: 'Prometheus',
 			options: {
 				// HTTP port
 				port: 3030,
 				// HTTP URL path
-				path: "/metrics",
+				path: '/metrics',
 				// Default labels which are appended to all metrics labels
 				defaultLabels: registry => ({
 					namespace: registry.broker.namespace,
@@ -163,7 +163,7 @@ module.exports = {
 		enabled: true,
 		// Available built-in exporters: "Console", "Datadog", "Event", "EventLegacy", "Jaeger", "Zipkin"
 		exporter: {
-			type: "Console", // Console exporter is only for development!
+			type: 'Console', // Console exporter is only for development!
 			options: {
 				// Custom logger
 				logger: null,
@@ -191,4 +191,4 @@ module.exports = {
 
 	// Called after broker stopped.
 	async stopped(broker) {}
-};
+}

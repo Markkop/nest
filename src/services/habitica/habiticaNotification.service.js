@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios')
 
 /**
  * @typedef HabiticaNotification
@@ -13,7 +13,7 @@ const axios = require("axios");
  */
 
 module.exports = {
-	name: "habiticaNotification",
+	name: 'habiticaNotification',
 
 	mixins: [axios],
 
@@ -22,13 +22,13 @@ module.exports = {
 	 */
 	settings: {
 		axios: {
-			baseURL: "https://habitica.com/api/v3/",
+			baseURL: 'https://habitica.com/api/v3/',
 			timeout: 5000,
 			headers: {
-				"Content-Type": "application/json",
-				"x-api-user": `${process.env.HABITICA_USER}`,
-				"x-api-key": `${process.env.HABITICA_TOKEN}`,
-				"x-client": `${process.env.HABITICA_USER}-Testing`
+				'Content-Type': 'application/json',
+				'x-api-user': `${process.env.HABITICA_USER}`,
+				'x-api-key': `${process.env.HABITICA_TOKEN}`,
+				'x-client': `${process.env.HABITICA_USER}-Testing`
 			}
 		}
 	},
@@ -45,7 +45,7 @@ module.exports = {
 			 * @returns { HabiticaNotification[] } Habitica user's notification list
 			 */
 			handler(ctx) {
-				return this.getNotificationsFromHabitica();
+				return this.getNotificationsFromHabitica()
 			}
 		},
 
@@ -57,7 +57,7 @@ module.exports = {
 			 * @returns { HabiticaNotification[] } Habitica user's notification list
 			 */
 			handler(ctx) {
-				return this.readAllNotifications();
+				return this.readAllNotifications()
 			}
 		}
 	},
@@ -74,8 +74,8 @@ module.exports = {
 		async getNotificationsFromHabitica() {
 			const {
 				data: { notifications }
-			} = await this.axios.get("/user");
-			return notifications;
+			} = await this.axios.get('/user')
+			return notifications
 		},
 
 		/**
@@ -84,9 +84,9 @@ module.exports = {
 		 * @returns { HabiticaNotification[] } Habitica user's notification list
 		 */
 		async readAllNotifications() {
-			const notifications = await this.getNotificationsFromHabitica();
-			const readNotificationById = async ({ id }) => this.axios.post(`/notifications/${id}/read `);
-			return Promise.all(notifications.map(readNotificationById));
+			const notifications = await this.getNotificationsFromHabitica()
+			const readNotificationById = async ({ id }) => this.axios.post(`/notifications/${id}/read `)
+			return Promise.all(notifications.map(readNotificationById))
 		}
 	},
 
@@ -98,7 +98,7 @@ module.exports = {
 			baseURL: this.settings.axios.baseURL,
 			timeout: this.settings.axios.timeout,
 			headers: this.settings.axios.headers
-		});
+		})
 	},
 
 	/**
@@ -110,4 +110,4 @@ module.exports = {
 	 * Service stopped lifecycle event handler.
 	 */
 	stopped() {}
-};
+}
