@@ -36,10 +36,6 @@
   },
   "jest": {
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "rootDir": "./services",
-    "roots": [
-      "../test"
-    ]
+    "testEnvironment": "node"
   }
 }
