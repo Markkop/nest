@@ -28,8 +28,9 @@ In the terminal, try the following commands:
 -   **greeter**: Sample service with `hello` and `welcome` actions.
 -   **asana**: Asana task service.
 -   **habitica**: Habitica habit and task service.
--   **trello**: Soon...
--   **discord**: Soon...
+-   **mocks**: A service that returns mocked data
+-   **trello**: `soon...`
+-   **discord**: `soon...`
 
 ## Useful links
 
