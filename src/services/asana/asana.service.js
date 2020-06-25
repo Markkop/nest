@@ -199,7 +199,7 @@ module.exports = {
 	 */
 	methods: {
 		/**
-		 * Create Habitica task based on received asana events
+		 * Dispatch actions to Habitica and Telegram Services
 		 * @param { import('asana').resources.Events.Type[] } events
 		 * @returns { import('../habitica/habiticaTask.service').HabiticaTask) }
 		 */
