@@ -84,8 +84,8 @@ module.exports = {
 			})
 
 			const { name, projects, memberships } = asanaTask
-			this.logger.info('info', memberships, isRoleSection)
 			const isRoleSection = memberships.some(membership => membership.section.gid === '1166479981872937')
+			this.logger.info('info', memberships, isRoleSection)
 			if (!isRoleSection) {
 				return
 			}
