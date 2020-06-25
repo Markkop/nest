@@ -210,7 +210,6 @@ module.exports = {
 				const assignedTask = await this.getAsanaTaskById('1167854517839477')
 				const assignee = (assignedTask && assignedTask.assignee) || {}
 				const isUserAssigned = assignee.gid === process.env.ASSIGNEE_GID
-				this.logger.info('info',assignedTask, assignee, isUserAssigned )
 				events.forEach(event => {
 					this.logger.info('Received webhook event', event)
 					const taskId = typeof event.resource === 'object' ? event.resource.gid : event.resource
@@ -222,16 +221,8 @@ module.exports = {
 						uniqueIdsToSyncWithHabitica.push(taskId)
 					}
 
-					if (!isUserAssigned) {
-						return
-					}
-
 					const isUniqueId = !uniqueIdsToSendToTelegram.includes(taskId)
-					const eventParent = event.parent || {}
-					const isParentSection = eventParent.resource_type === 'section'
-					const isRequiredSection = eventParent.gid === '1166479981872937'
-					const hasRequiredParentSection = isParentSection && isRequiredSection
-					if (hasRequiredParentSection && isUniqueId) {
+					if (!isUserAssigned && isUniqueId) {
 						uniqueIdsToSendToTelegram.push(taskId)
 					}
 				})

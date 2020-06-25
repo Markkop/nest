@@ -72,7 +72,8 @@ module.exports = {
 	methods: {
 		
 		/**
-		 * Get task from Asana and send to telegram bot
+		 * Get task from Asana and send to telegram bot, if
+		 * it's in the correct role section
 		 *
 		 * @param { Number } gid - Task gid.
 		 * @returns { Promise.<Object> }
@@ -82,7 +83,12 @@ module.exports = {
 				gid
 			})
 
-			const { name, projects } = asanaTask
+			const { name, projects, memberships } = asanaTask
+			const isRoleSection = memberships.some(membership => membership.section.gid === '1166479981872937')
+			if (!isRoleSection) {
+				return
+			}
+
 			const project = projects[0] && projects[0].gid
 
 			const text = '🔥 <b>Hey, Shopbacker.</b> Your pool has been updated:'+
