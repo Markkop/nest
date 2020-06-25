@@ -35,15 +35,35 @@ module.exports = {
 		},
 
 		/**
-		 * Creates a new message in the party's chat
+		 * Send a message to an user via telegram bot
 		 * @param { String } message
-		 * @returns { HabiticaChatMessage }
+		 * @returns { Object }
 		 */
 		sendTextToChatId: {
 			handler(ctx) {
 				return this.sendTextToChatId(ctx.params.text, ctx.params.chatId)
 			}
-		}
+		},
+
+		/**
+		 * Get task from Asana and send to telegram bot
+		 */
+		syncTaskFromAsanaById: {
+			params: {
+				gid: { type: 'string' }
+			},
+
+			/**
+			 * Send a text message to telegram bot based on an Asana task gid
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { Object } 
+			 */
+			handler(ctx) {
+				const response = this.syncTaskFromAsanaById(ctx.params.gid)
+				return response
+			}
+		},
 	},
 
 	/**
@@ -52,10 +72,10 @@ module.exports = {
 	methods: {
 		
 		/**
-		 * Get task from Asana, saves it in the x's servers
+		 * Get task from Asana and send to telegram bot
 		 *
 		 * @param { Number } gid - Task gid.
-		 * @returns { Promise.<x> }
+		 * @returns { Promise.<Object> }
 		 */
 		async syncTaskFromAsanaById(gid) {
 			const asanaTask = await this.broker.call('asana.getAsanaTaskById', {
@@ -65,21 +85,21 @@ module.exports = {
 			const { name } = asanaTask
 
 			const syncdTask = await this.sendTextToChatId(name, process.env.TELEGRAM_USERID)
-			this.logger.info('Task sent to telegram', asanaTask)
+			this.logger.info('Task sent to telegram', name)
 			return syncdTask
 		},
 
 		/**
-		 * Creates a new message in the party's chat
+		 * Send a message to an user via telegram bot
 		 * @param { String } message
-		 * @returns { HabiticaChatMessage }
+		 * @returns { Object } request response
 		 */
 		async sendTextToChatId(text, chatId) {
 			try {
 				const {
-					data: { data: responseData }
+					data 
 				} = await this.axios.post('/sendMessage', { text, 'chat_id': chatId })
-				return responseData
+				return data
 			} catch (error) {
 				this.logger.error(error)
 			}
