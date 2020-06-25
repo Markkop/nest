@@ -224,6 +224,7 @@ module.exports = {
 					const isParentSection = eventParent === 'section'
 					const isRequiredSection = eventParent === '1166479981872937'
 					const hasRequiredParentSection = isParentSection && isRequiredSection
+					this.logger.info(`${isBeingAdded}, ${hasRequiredParentSection}, ${isUniqueId}`)
 					if (isBeingAdded && hasRequiredParentSection && isUniqueId) {
 						uniqueIdsToSendToTelegram.push(taskId)
 					}
