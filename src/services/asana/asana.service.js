@@ -221,8 +221,8 @@ module.exports = {
 					const isUniqueId = !uniqueIdsToSendToTelegram.includes(taskId)
 					const isBeingAdded = event.action === 'added'
 					const eventParent = event.parent || {}
-					const isParentSection = eventParent === 'section'
-					const isRequiredSection = eventParent === '1166479981872937'
+					const isParentSection = eventParent.resource_type === 'section'
+					const isRequiredSection = eventParent.gid === '1166479981872937'
 					const hasRequiredParentSection = isParentSection && isRequiredSection
 					this.logger.info(`${isBeingAdded}, ${hasRequiredParentSection}, ${isUniqueId}`)
 					if (isBeingAdded && hasRequiredParentSection && isUniqueId) {
