@@ -203,24 +203,48 @@ module.exports = {
 		 * @param { import('asana').resources.Events.Type[] } events
 		 * @returns { import('../habitica/habiticaTask.service').HabiticaTask) }
 		 */
-		async syncTasksByEvents(events) {
+		async syncTasksByEvents(events = []) {
 			try {
-				const uniqueIds = (events || []).reduce((taskIds, event) => {
+				const uniqueIdsToSyncWithHabitica = []
+				const uniqueIdsToSendToTelegram = []
+				events.forEach(event => {
 					this.logger.info('Received webhook event', event)
 					const taskId = typeof event.resource === 'object' ? event.resource.gid : event.resource
-					if (event.resource.resource_type === 'task' && !taskIds.includes(taskId)) {
-						taskIds.push(taskId)
+					if (event.resource.resource_type !== 'task') {
+						return
 					}
-					return taskIds
-				}, [])
-				const tasks = await Promise.all(
-					uniqueIds.map(gid =>
+
+					if (!uniqueIdsToSyncWithHabitica.includes(taskId)) {
+						uniqueIdsToSyncWithHabitica.push(taskId)
+					}
+
+					const isUniqueId = !uniqueIdsToSendToTelegram.includes(taskId)
+					const isBeingAdded = event.action === 'added'
+					const eventParent = event.parent || {}
+					const isParentSection = eventParent === 'section'
+					const isRequiredSection = eventParent === '1166479981872937'
+					const hasRequiredParentSection = isParentSection && isRequiredSection
+					if (isBeingAdded && hasRequiredParentSection && isUniqueId) {
+						uniqueIdsToSendToTelegram.push(taskId)
+					}
+				})
+				
+				const habiticaTasks = await Promise.all(
+					uniqueIdsToSyncWithHabitica.map(gid =>
 						this.broker.call('habiticaTask.syncTaskFromAsanaById', {
 							gid
 						})
 					)
 				)
-				return tasks
+
+				const telegramTasks = await Promise.all(
+					uniqueIdsToSendToTelegram.map(gid =>
+						this.broker.call('telegram.syncTaskFromAsanaById', {
+							gid
+						})
+					)
+				)
+				return [habiticaTasks, telegramTasks]
 			} catch (error) {
 				throw new AsanaError('There\'s been a problem with task sync', error)
 			}
