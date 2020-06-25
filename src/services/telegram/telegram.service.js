@@ -82,11 +82,14 @@ module.exports = {
 				gid
 			})
 
-			const { name } = asanaTask
+			const { name, projects } = asanaTask
+			const project = projects[0] && projects[0].gid
 
-			const syncdTask = await this.sendTextToChatId(name, process.env.TELEGRAM_USERID)
-			this.logger.info('Task sent to telegram', name)
-			return syncdTask
+			const text = '🔥 <b>Hey, Shopbacker.</b> Your pool has been updated:'+
+			`\n<a href="https://app.asana.com/0/${project}/${gid}">${name}</a>`
+
+			const response = await this.sendTextToChatId(text, process.env.TELEGRAM_USERID)
+			return response
 		},
 
 		/**
@@ -96,9 +99,14 @@ module.exports = {
 		 */
 		async sendTextToChatId(text, chatId) {
 			try {
-				const {
-					data 
-				} = await this.axios.post('/sendMessage', { text, 'chat_id': chatId })
+				const options = {
+					text, 
+					chat_id: chatId,
+					parse_mode: 'HTML',
+					disable_notification: true
+				}
+				const { data } = await this.axios.post('/sendMessage', options)
+				this.logger.info('Task sent to telegram', text)
 				return data
 			} catch (error) {
 				this.logger.error(error)

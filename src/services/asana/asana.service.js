@@ -201,12 +201,14 @@ module.exports = {
 		/**
 		 * Dispatch actions to Habitica and Telegram Services
 		 * @param { import('asana').resources.Events.Type[] } events
-		 * @returns { import('../habitica/habiticaTask.service').HabiticaTask) }
+		 * @returns { Object[] }
 		 */
 		async syncTasksByEvents(events = []) {
 			try {
 				const uniqueIdsToSyncWithHabitica = []
 				const uniqueIdsToSendToTelegram = []
+				const assignedTask = await this.getAsanaTaskById('1167854517839477')
+				const isUserAssigned = assignedTask && assignedTask.assignee === process.env.ASSIGNEE_GID
 				events.forEach(event => {
 					this.logger.info('Received webhook event', event)
 					const taskId = typeof event.resource === 'object' ? event.resource.gid : event.resource
@@ -218,14 +220,16 @@ module.exports = {
 						uniqueIdsToSyncWithHabitica.push(taskId)
 					}
 
+					if (!isUserAssigned) {
+						return
+					}
+
 					const isUniqueId = !uniqueIdsToSendToTelegram.includes(taskId)
-					const isBeingAdded = event.action === 'added'
 					const eventParent = event.parent || {}
 					const isParentSection = eventParent.resource_type === 'section'
 					const isRequiredSection = eventParent.gid === '1166479981872937'
 					const hasRequiredParentSection = isParentSection && isRequiredSection
-					this.logger.info(`${isBeingAdded}, ${hasRequiredParentSection}, ${isUniqueId}`)
-					if (isBeingAdded && hasRequiredParentSection && isUniqueId) {
+					if (hasRequiredParentSection && isUniqueId) {
 						uniqueIdsToSendToTelegram.push(taskId)
 					}
 				})
@@ -255,7 +259,7 @@ module.exports = {
 		 * Get an Asana task by its id.
 		 *
 		 * @param { string } gid - Task gid.
-		 * @returns { import('asana').resources.Tasks.Type } Related task found.
+		 * @returns { Promise.<import('asana').resources.Tasks.Type> } Related task found.
 		 */
 		async getAsanaTaskById(gid) {
 			try {

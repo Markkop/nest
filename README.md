@@ -29,6 +29,7 @@ In the terminal, try the following commands:
 -   **asana**: Asana task service.
 -   **habitica**: Habitica habit and task service.
 -   **mocks**: A service that returns mocked data
+-   **telegram**: Telegram service
 -   **trello**: `soon...`
 -   **discord**: `soon...`
 
