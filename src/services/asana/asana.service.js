@@ -209,6 +209,7 @@ module.exports = {
 				const uniqueIdsToSendToTelegram = []
 				const assignedTask = await this.getAsanaTaskById('1167854517839477')
 				const isUserAssigned = assignedTask && assignedTask.assignee === process.env.ASSIGNEE_GID
+				this.logger.info(`${assignedTask}, ${isUserAssigned}`)
 				events.forEach(event => {
 					this.logger.info('Received webhook event', event)
 					const taskId = typeof event.resource === 'object' ? event.resource.gid : event.resource
