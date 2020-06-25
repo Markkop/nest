@@ -222,7 +222,7 @@ module.exports = {
 					}
 
 					const isUniqueId = !uniqueIdsToSendToTelegram.includes(taskId)
-					if (!isUserAssigned && isUniqueId) {
+					if (isUserAssigned && isUniqueId) {
 						uniqueIdsToSendToTelegram.push(taskId)
 					}
 				})
