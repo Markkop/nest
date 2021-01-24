@@ -30,8 +30,7 @@ In the terminal, try the following commands:
 -   **habitica**: Habitica habit and task service.
 -   **mocks**: A service that returns mocked data
 -   **telegram**: Telegram service
--   **trello**: `soon...`
--   **discord**: `soon...`
+-   **trackingmore**: Tracking More service
 
 ## Useful links
 
