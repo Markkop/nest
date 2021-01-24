@@ -150,8 +150,8 @@ module.exports = {
 				if (!trackingResult) {
 					responseText = 'No result found'
 				}
-				this.logger.info(`Sending response to ${update.from.id}`, responseText)
-				const response = await this.sendTextToChatId(responseText, update.from.id)
+				this.logger.info(`Sending response to ${update.message.from.id}`, responseText)
+				const response = await this.sendTextToChatId(responseText, update.message.from.id)
 				return response
 			} catch (error) {
 				this.logger.error(error)
