@@ -25,6 +25,7 @@ module.exports = {
 					],
 					'POST /habitica': 'habitica.onWebhookTrigger',
 					'POST /trackingmore': 'trackingmore.onWebhookTrigger',
+					'POST /telegram': 'telegram.onWebhookTrigger',
 				},
 				bodyParsers: {
 					json: true

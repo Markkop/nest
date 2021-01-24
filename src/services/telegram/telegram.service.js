@@ -64,6 +64,16 @@ module.exports = {
 				return response
 			}
 		},
+		onWebhookTrigger: {
+			/**
+			 * Actions to be done according to the webhook's trigger
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { Any }
+			 */
+			handler(ctx) {
+				return this.onWebhookTrigger(ctx.params)
+			}
+		},
 	},
 
 	/**
@@ -117,6 +127,35 @@ module.exports = {
 				return data
 			} catch (error) {
 				this.logger.error(error)
+			}
+		},
+		/**
+		 * Send a message to an user via telegram bot
+		 * @param { String } message
+		 * @returns { Object } request response
+		 */
+		async onWebhookTrigger(update) {
+			try {
+				this.logger.info('Update received on Telegram Bpt', update)
+				const message =  update.message
+				const text = message.text
+				const getTrackingText = 'get tracking for '
+				if (!text.includes(getTrackingText)) {
+					return
+				}
+				const splittedText = text.split(getTrackingText)
+				const trackingNumber = splittedText[1]
+				const trackingResult = await this.broker.call('trackingmore.getTrackingResult', { trackingNumber })
+				let responseText = trackingResult
+				if (!trackingResult) {
+					responseText = 'No result found'
+				}
+				this.logger.info(`Sending response to ${update.from.id}`, responseText)
+				const response = await this.sendTextToChatId(responseText, update.from.id)
+				return response
+			} catch (error) {
+				this.logger.error(error)
+				return error
 			}
 		}
 	},
