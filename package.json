@@ -20,8 +20,8 @@
   ],
   "devDependencies": {
     "eslint": "^6.8.0",
-    "jest": "^25.1.0",
-    "jest-cli": "^25.1.0",
+    "jest": ">=25.1.0",
+    "jest-cli": ">=25.1.0",
     "moleculer-repl": "^0.6.2"
   },
   "dependencies": {
