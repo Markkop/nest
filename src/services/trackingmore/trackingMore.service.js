@@ -42,7 +42,8 @@ module.exports = {
 			 */
 			handler(ctx) {
 				const item = this.mapTrackingItem(ctx.params.data)
-				this.broker.call('telegram.sendTextToChatId', { text: item, chatId: process.env.TELEGRAM_USERID })
+				const text = JSON.stringify(item, null, 4)
+				this.broker.call('telegram.sendTextToChatId', { text, chatId: process.env.TELEGRAM_USERID })
 			}
 		},
 
