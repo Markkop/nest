@@ -47,12 +47,37 @@ module.exports = {
 		},
 
 		/**
+		 * Get all linked trackings
+		 */
+		getTrackingList: {
+			handler() {
+				return this.getTrackingList()
+			}
+		},
+
+		/**
+		 * Get carrier code
+		 */
+		getCarrierCode: {
+			handler(ctx) {
+				return this.getCarrierCode(ctx.params.trackingNumber)
+			}
+		},
+		/**
 		 * Gets the tracking result for a given trackingNumber and an
 		 * optional carrierCode
 		 */
 		getTrackingResult: {
 			handler(ctx) {
 				return this.getTrackingResult(ctx.params.trackingNumber, ctx.params.carrierCode)
+			}
+		},
+		/**
+		 * Creates a new tracking item
+		 */
+		createTrackingItem: {
+			handler(ctx) {
+				return this.createTrackingItem(ctx.params.trackingNumber, ctx.params.carrierCode)
 			}
 		}
 	},
@@ -70,8 +95,29 @@ module.exports = {
 			try {
 				const response = await this.axios.post('/v2/carriers/detect', { 'tracking_number': trackingNumber})
 				const responseData = response.data
+				const carriers = responseData.data
+				if (!carriers.length) {
+					return ''
+				}
+				const cainiaoCarrier = carriers.find(carrier => carrier.code === 'cainiao')
+				if (cainiaoCarrier) {
+					return cainiaoCarrier.code
+				}
+				return carriers[0].code
+			} catch (error) {
+				this.logger.error(error)
+			}
+		},
+		/**
+		 * Get all linked trackings
+		 * @returns { Promise<Array> }
+		 */
+		async getTrackingList() {
+			try {
+				const response = await this.axios.get('/v2/trackings/get')
+				const responseData = response.data
 				const data = responseData.data
-				return data[0].code
+				return data.items.map(this.mapTrackingItem)
 			} catch (error) {
 				this.logger.error(error)
 			}
@@ -90,10 +136,46 @@ module.exports = {
 				}
 				const response = await this.axios.get(`/v2/trackings/${carrierCode}/${trackingNumber}`)
 				const responseData = response.data
-				const data = responseData.data
-				return data.lastEvent
+				const trackingItem = responseData.data
+				return this.mapTrackingItem(trackingItem)
 			} catch (error) {
 				this.logger.error(error)
+			}
+		},
+		/**
+		 * Create a new tracking
+		 * @param { String } trackingNumber
+		 * @param { String } [carrierCode]
+		 * @returns { Promise<Any> }
+		 */
+		async createTrackingItem(trackingNumber, carrierCode) {
+			try {
+				if (!carrierCode) {
+					carrierCode = await this.getCarrierCode(trackingNumber)
+				}
+				const body = {
+					'tracking_number': trackingNumber,
+					'carrier_code': carrierCode
+				}
+				const response = await this.axios.post('/v2/trackings/post', body)
+				const responseData = response.data
+				if (responseData.meta.code !== 200) {
+					return responseData.meta
+				}
+				return responseData.data
+			} catch (error) {
+				this.logger.error(error)
+			}
+		},
+		mapTrackingItem(item) {
+			return {
+				trackingNumber: item.tracking_number,
+				carrierCode: item.carrier_code,
+				timeElapsed: item.itemTimeLength,
+				substatus: item.substatus,
+				lastTrackInfo: item.origin_info.trackinfo[0],
+				lastEvent: item.lastEvent,
+				destinationTrackNumber: item.destination_track_number
 			}
 		}
 	},

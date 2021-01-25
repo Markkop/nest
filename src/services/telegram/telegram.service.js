@@ -136,20 +136,32 @@ module.exports = {
 		 */
 		async onWebhookTrigger(update) {
 			try {
-				this.logger.info('Update received on Telegram Bpt', update)
+				this.logger.info('Update received on Telegram Bot', update)
 				const message =  update.message
-				const text = message.text
-				const getTrackingText = 'get tracking for '
-				if (!text.includes(getTrackingText)) {
+				const messageText = message.text
+
+				const eventsTexts = {
+					getMyTrackings: 'get my trackings',
+					createNewTracking: 'create new tracking for '
+				}
+
+				const hasMatchingEventText = Object.values(eventsTexts).some(text => messageText.includes(text))
+				if (!hasMatchingEventText) {
 					return
 				}
-				const splittedText = text.split(getTrackingText)
-				const trackingNumber = splittedText[1]
-				const trackingResult = await this.broker.call('trackingmore.getTrackingResult', { trackingNumber })
-				let responseText = trackingResult
-				if (!trackingResult) {
-					responseText = 'No result found'
+
+				let responseText = ''
+				if (messageText.includes(eventsTexts.getMyTrackings)) {
+					const trackingItems = await this.broker.call('trackingmore.getTrackingList')
+					responseText = JSON.stringify(trackingItems, null, 2)
 				}
+
+				if (messageText.includes(eventsTexts.createNewTracking)) {
+					const trackingNumber = messageText.split(eventsTexts.createNewTracking)[1]
+					const response = await this.broker.call('trackingmore.createTrackingItem', { trackingNumber })
+					responseText = JSON.stringify(response, null, 2)
+				}
+
 				this.logger.info(`Sending response to ${update.message.from.id}`, responseText)
 				const response = await this.sendTextToChatId(responseText, update.message.from.id)
 				return response
