@@ -153,7 +153,12 @@ module.exports = {
 				let responseText = ''
 				if (messageText.includes(eventsTexts.getMyTrackings)) {
 					const trackingItems = await this.broker.call('trackingmore.getTrackingList')
-					responseText = JSON.stringify(trackingItems, null, 2)
+					for (let index = 0; index < trackingItems.length; index++) {
+						const item = trackingItems[index]
+						responseText = JSON.stringify(item, null, 2)
+						await this.sendTextToChatId(responseText, update.message.from.id)
+					}
+					return
 				}
 
 				if (messageText.includes(eventsTexts.createNewTracking)) {
