@@ -1,4 +1,5 @@
 const axios = require('axios')
+const parseTrackingItemToText = require('../../utils/parseTrackingItemToText')
 
 module.exports = {
 	name: 'trackingmore',
@@ -42,7 +43,7 @@ module.exports = {
 			 */
 			handler(ctx) {
 				const item = this.mapTrackingItem(ctx.params.data)
-				const text = JSON.stringify(item, null, 4)
+				const text = parseTrackingItemToText(item)
 				this.broker.call('telegram.sendTextToChatId', { text, chatId: process.env.TELEGRAM_USERID })
 			}
 		},
@@ -118,7 +119,9 @@ module.exports = {
 				const response = await this.axios.get('/v2/trackings/get')
 				const responseData = response.data
 				const data = responseData.data
-				return data.items.map(this.mapTrackingItem)
+				const items = data.items.map(this.mapTrackingItem)
+				this.logger.info('Tracking list acquired', items)
+				return items
 			} catch (error) {
 				this.logger.error(error)
 			}
@@ -174,7 +177,7 @@ module.exports = {
 				carrierCode: item.carrier_code,
 				timeElapsed: item.itemTimeLength,
 				substatus: item.substatus,
-				lastTrackInfo: item.origin_info.trackinfo[0],
+				lastTrackInfo: item.origin_info && item.origin_info.trackinfo[0],
 				lastEvent: item.lastEvent,
 				destinationTrackNumber: item.destination_track_number
 			}

@@ -1,4 +1,5 @@
 const axios = require('axios')
+const parseTrackingItemToText = require('../../utils/parseTrackingItemToText')
 
 module.exports = {
 	name: 'telegram',
@@ -155,8 +156,7 @@ module.exports = {
 					const trackingItems = await this.broker.call('trackingmore.getTrackingList')
 					for (let index = 0; index < trackingItems.length; index++) {
 						const item = trackingItems[index]
-						responseText = JSON.stringify(item, null, 2)
-						await this.sendTextToChatId(responseText, update.message.from.id)
+						await this.sendTextToChatId(parseTrackingItemToText(item), update.message.from.id)
 					}
 					return
 				}
