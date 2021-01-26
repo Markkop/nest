@@ -29,17 +29,21 @@ const trackingMoreStatus = {
 module.exports = function parseTrackingItemToText (item) {
 	const lastTrackInfo = item.lastTrackInfo || {}
 	const lastSubstatus = lastTrackInfo.substatus
-	let text = `🏷 | <b>ID: ${item.trackingNumber}</b>
-🚚 | <b>Carrier:</b> ${item.carrierCode}			
-⌛️ | <b>Time Elapsed:</b> ${item.timeElapsed} days
-🔗 | <b>Status:</b> ${trackingMoreStatus[item.substatus] || item.substatus}
-🔎 | <b>Last Tracking Info:</b>
-At ${lastTrackInfo.Date}:
-- ${lastTrackInfo.StatusDescription}
-- ${trackingMoreStatus[lastSubstatus] || lastSubstatus}
-📜 | <b>Last Event:</b> ${item.lastEvent}`
+	const textLines = [
+		`🏷 | <b>ID: ${item.trackingNumber}</b>`,
+		`🚚 | <b>Carrier:</b> ${item.carrierCode}`,			
+		`⌛️ | <b>Time Elapsed:</b> ${item.timeElapsed} days`,
+		`🔗 | <b>Status:</b> ${trackingMoreStatus[item.substatus] || item.substatus}`,
+		'🔎 | <b>Last Tracking Info:</b>',
+		`At ${lastTrackInfo.Date}:`,
+		`- ${lastTrackInfo.StatusDescription}`,
+		`- ${trackingMoreStatus[lastSubstatus] || lastSubstatus}`
+	]
+	if (item.lastEvent) {
+		textLines.push(`📜 | <b>Last Event:</b> ${item.lastEvent}`)
+	}
 	if (item.destinationTrackNumber) {
-		text = text + `\n✨ | <b>Destination Track Number:</b> <code>${item.destinationTrackNumber}</code>`
+		textLines.push(`✨ | <b>Destination Track Number:</b> <code>${item.destinationTrackNumber}</code>`)
 	} 
-	return text
+	return textLines.join('\n')
 }

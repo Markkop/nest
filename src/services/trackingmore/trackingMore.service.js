@@ -173,10 +173,20 @@ module.exports = {
 			}
 		},
 		mapTrackingItem(item) {
+			let timeElapsed = item.itemTimeLength
+			const itemOriginInfo = item.origin_info || {}
+			const trackInfo = itemOriginInfo.trackinfo || []
+			if (!timeElapsed && trackInfo.length) {
+				const firstEvent = trackInfo[trackInfo.length - 1]
+				const today = new Date(Date.now())
+				const timeDiff = Math.abs(today - new Date(firstEvent.Date))
+				const daysDiff = timeDiff / 1000 / 60 / 60 / 24
+				timeElapsed = Math.round(daysDiff)
+			}
 			return {
 				trackingNumber: item.tracking_number,
 				carrierCode: item.carrier_code,
-				timeElapsed: item.itemTimeLength,
+				timeElapsed: timeElapsed,
 				substatus: item.substatus,
 				lastTrackInfo: item.origin_info && item.origin_info.trackinfo[0],
 				lastEvent: item.lastEvent,
