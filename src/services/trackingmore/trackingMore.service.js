@@ -42,6 +42,7 @@ module.exports = {
 			 * @returns { Any }
 			 */
 			handler(ctx) {
+				this.logger.info('Received trackingmore webhook update', ctx.params)
 				const item = this.mapTrackingItem(ctx.params.data)
 				const text = parseTrackingItemToText(item)
 				this.broker.call('telegram.sendTextToChatId', { text, chatId: process.env.TELEGRAM_USERID })
