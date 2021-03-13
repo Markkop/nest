@@ -229,6 +229,10 @@ module.exports = {
 				return { syncd: 'not' }
 			}
 			const trelloCard = await this.broker.call('trello.getCard', { cardId })
+			if (!trelloCard) {
+				this.logger.info('No card found with cardId ', cardId)
+				return
+			}
 			const syncdTask = await this.deduplicateTrelloTask(trelloCard)
 			this.logger.info('Synchronized task', syncdTask.id)
 			return syncdTask
@@ -331,7 +335,7 @@ module.exports = {
 				const {
 					data: { data: tasks }
 				} = await this.axios.get('/tasks/user')
-				const existingTask = tasks.find(task => task.notes && task.notes.includes(trelloCard.url))
+				const existingTask = tasks.find(task => task.notes && task.notes.includes(trelloCard.shortLink))
 				if (existingTask) {
 					habiticaTask.id = existingTask.id
 					habiticaTask._id = existingTask._id

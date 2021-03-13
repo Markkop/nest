@@ -17,7 +17,7 @@ module.exports = {
 			}
 		}
 	},
-	
+
 	/**
 	 * Actions.
 	 */
@@ -43,7 +43,12 @@ module.exports = {
 				const eventMap = {
 					addMemberToCard: () => this.onAddMemberToCard(ctx.params.action),
 				}
-				return eventMap[ctx.params.action.type]()
+
+				const action = eventMap[ctx.params.action.type]
+				if (!action) {
+					return
+				}
+				return action()
 			}
 		},
 		onHeadRequest: {
@@ -52,7 +57,7 @@ module.exports = {
 			 * @param { import('moleculer').Context } ctx - Moleculer context.
 			 * @returns { Any }
 			 */
-			handler(ctx) {
+			handler() {
 				return 'ok'
 			}
 		},
@@ -77,7 +82,7 @@ module.exports = {
 			 * @param { import('moleculer').Context } ctx - Moleculer context.
 			 * @returns { Any }
 			 */
-			handler(ctx) {
+			handler() {
 				return this.getWebhooks()
 			}
 		},
@@ -144,6 +149,7 @@ module.exports = {
 		 */
 		async getCard(cardId) {
 			try {
+				this.logger.info('Looking for Trello Card with id ', cardId)
 				const { data } = await this.axios.get(`/cards/${cardId}?key=${process.env.TRELLO_KEY}`)
 				return data
 			} catch (error) {
