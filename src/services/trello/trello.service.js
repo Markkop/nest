@@ -10,7 +10,7 @@ module.exports = {
 	 */
 	settings: {
 		axios: {
-			baseURL: 'https://api.trello.com/1/',
+			baseURL: 'https://api.trello.com/1',
 			timeout: 5000,
 			headers: {
 				'Content-Type': 'application/json',
@@ -53,13 +53,77 @@ module.exports = {
 				return 'ok'
 			}
 		},
+		createWebhook: {
+			params: {
+				description: { type: 'string' },
+				callbackURL: { type: 'string' },
+				idModel: { type: 'string' }
+			},
+			/**
+			 * Create a Trello Webhook
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { Any }
+			 */
+			handler(ctx) {
+				return this.createWebhook(ctx.params.description, ctx.params.callbackURL, ctx.params.idModel)
+			}
+		},
+		getWebhooks: {
+			/**
+			 * Create a Trello Webhook
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { Any }
+			 */
+			handler(ctx) {
+				return this.getWebhooks()
+			}
+		},
 	},
 
 	/**
 	 * Methods.
 	 */
 	methods: {
-
+		/**
+	     * Create a Trello Webhook
+  		 * @param { String } description
+  		 * @param { String } callbackURL
+  		 * @param { String } idModel
+		 * @returns { Object } request response
+		 */
+		async createWebhook(description, callbackURL, idModel) {
+			try {
+				const options = {
+					description,
+					callbackURL,
+					idModel
+				}
+				this.logger.info('Requesting Webhook creation', options)
+				const { data } = await this.axios.post(`/tokens/${process.env.TRELLO_TOKEN}/webhooks/?key=${process.env.TRELLO_KEY}`, options)
+				this.logger.info('Webhook creation response', data)
+				return data
+			} catch (error) {
+				this.logger.error(error)
+				if (error.isAxiosError) {
+					return error.response.data.message
+				}
+			}
+		},
+		/**
+	     * Get Trello Webhooks associated with the user token
+		 * @returns { Object } request response
+		 */
+		async getWebhooks() {
+			try {
+				const { data } = await this.axios.get(`/tokens/${process.env.TRELLO_TOKEN}/webhooks?key=${process.env.TRELLO_KEY}`)
+				return data
+			} catch (error) {
+				this.logger.error(error)
+				if (error.isAxiosError) {
+					return error.response.data.message
+				}
+			}
+		},
 	},
 
 	/**
