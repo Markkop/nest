@@ -150,7 +150,7 @@ module.exports = {
 		async getCard(cardId) {
 			try {
 				this.logger.info('Looking for Trello Card with id ', cardId)
-				const { data } = await this.axios.get(`/cards/${cardId}?key=${process.env.TRELLO_KEY}`)
+				const { data } = await this.axios.get(`/cards/${cardId}?key=${process.env.TRELLO_KEY}&token=${process.env.TRELLO_TOKEN}`)
 				return data
 			} catch (error) {
 				this.logger.error(error)
