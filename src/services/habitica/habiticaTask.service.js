@@ -99,6 +99,22 @@ module.exports = {
 			}
 		},
 
+		/**
+		 * Action to get task from a Trello Action and create it on Habitica.
+		 */
+		syncTaskFromTrelloByAction: {
+			/**
+			 * Creates or updates a task on habitica based on an Asana task gid
+			 *
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { HabiticaTask } Habitica created or updated task.
+			 */
+			handler(ctx) {
+				const response = this.syncTaskFromTrelloByAction(ctx.params)
+				return response
+			}
+		},
+
 		getTaskById: {
 			params: {
 				taskId: { type: 'string' }
@@ -189,7 +205,31 @@ module.exports = {
 				return { syncd: 'not' }
 			}
 
-			const syncdTask = await this.deduplicateTask(asanaTask)
+			const syncdTask = await this.deduplicateAsanaTask(asanaTask)
+			this.logger.info('Synchronized task', syncdTask.id)
+			return syncdTask
+		},
+
+		/**
+		 * Get task from Asana, saves it in the Habitica's servers
+		 *
+		 * @param { Number } gid - Task gid.
+		 * @returns { Promise.<HabiticaTask> }
+		 */
+		async syncTaskFromTrelloByAction(action) {
+			const member = action.member || {}
+			if (member.id !== '5d6d5c233df42711cfa3ea3b') {
+				return { syncd: 'not' }
+			}
+
+			const data = action.data || {}
+			const card = data.card || {}
+			const cardId = card.id
+			if (!cardId) {
+				return { syncd: 'not' }
+			}
+			const trelloCard = await this.broker.call('trello.getCard', { cardId })
+			const syncdTask = await this.deduplicateTrelloTask(trelloCard)
 			this.logger.info('Synchronized task', syncdTask.id)
 			return syncdTask
 		},
@@ -241,19 +281,57 @@ module.exports = {
 		},
 
 		/**
-		 * Parses the task to a normalized format and updates it
+		 * Parses a asana task to a normalized format and updates it
 		 * or creates a new task
 		 *
 		 * @param { import('asana').resources.Tasks.Type } asanaTask - Task from asana
 		 * @returns { Promise.<HabiticaTask> } updated task state.
 		 */
-		async deduplicateTask(asanaTask) {
+		async deduplicateAsanaTask(asanaTask) {
 			try {
 				const habiticaTask = this.parseTaskFromAsana(asanaTask)
 				const {
 					data: { data: tasks }
 				} = await this.axios.get('/tasks/user')
 				const existingTask = tasks.find(task => task.notes && task.notes.includes(asanaTask.gid))
+				if (existingTask) {
+					habiticaTask.id = existingTask.id
+					habiticaTask._id = existingTask._id
+					return this.updateTask(habiticaTask)
+				}
+
+				return this.createTask(habiticaTask)
+			} catch (error) {
+				const { message } = error
+				throw new Error(`Could not sync task: ${message}`, error)
+			}
+		},
+
+		parseTrelloCardToHabiticaTask(trelloCard) {
+			const { name, url } = trelloCard
+			const habiticaTask = {
+				text: `:trophy: ${name}`,
+				type: 'todo',
+				notes: `[Ir para a task](${url})`,
+				priority: 2,
+			}
+			return habiticaTask
+		},
+
+		/**
+		 * Parses a Trello card (task) to a normalized format and updates it
+		 * or creates a new task
+		 *
+		 * @param { Object } trelloAction - Task from asana
+		 * @returns { Promise.<HabiticaTask> } updated task state.
+		 */
+		async deduplicateTrelloTask(trelloCard) {
+			try {
+				const habiticaTask = this.parseTrelloCardToHabiticaTask(trelloCard)
+				const {
+					data: { data: tasks }
+				} = await this.axios.get('/tasks/user')
+				const existingTask = tasks.find(task => task.notes && task.notes.includes(trelloCard.url))
 				if (existingTask) {
 					habiticaTask.id = existingTask.id
 					habiticaTask._id = existingTask._id

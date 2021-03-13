@@ -17,7 +17,7 @@ module.exports = {
 			}
 		}
 	},
-
+	
 	/**
 	 * Actions.
 	 */
@@ -40,7 +40,10 @@ module.exports = {
 			 * @returns { Any }
 			 */
 			handler(ctx) {
-				this.logger.info('Received trello webhook update', ctx.params)
+				const eventMap = {
+					addMemberToCard: () => this.onAddMemberToCard(ctx.params.action),
+				}
+				return eventMap[ctx.params.action.type]()
 			}
 		},
 		onHeadRequest: {
@@ -78,6 +81,16 @@ module.exports = {
 				return this.getWebhooks()
 			}
 		},
+		getCard: {
+			/**
+			 * Gets a Trello Card
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { TrelloCard }
+			 */
+			handler(ctx) {
+				return this.getCard(ctx.params.cardId)
+			}
+		}
 	},
 
 	/**
@@ -124,6 +137,28 @@ module.exports = {
 				}
 			}
 		},
+		/**
+		 * Gets Card from Trello
+		 * @param {string} cardId 
+		 * @returns {TrelloCard}
+		 */
+		async getCard(cardId) {
+			try {
+				const { data } = await this.axios.get(`/cards/${cardId}?key=${process.env.TRELLO_KEY}`)
+				return data
+			} catch (error) {
+				this.logger.error(error)
+				if (error.isAxiosError) {
+					return error.response.data.message
+				}
+			}
+		},
+		/**
+		 * When adding a member to a card
+		 */
+		async onAddMemberToCard(action) {
+			return this.broker.call('habiticaTask.syncTaskFromTrelloByAction', action)
+		}
 	},
 
 	/**

@@ -1,0 +1,104 @@
+{
+    "model": {
+        "id": "5d838928f37251094ec4139b",
+        "name": "Projects",
+        "desc": "",
+        "descData": null,
+        "closed": false,
+        "idOrganization": null,
+        "idEnterprise": null,
+        "pinned": false,
+        "url": "https: //trello.com/b/NggQmBGX/projects",
+        "shortUrl": "https: //trello.com/b/NggQmBGX",
+        "prefs": {
+            "permissionLevel": "private",
+            "hideVotes": false,
+            "voting": "disabled",
+            "comments": "members",
+            "invitations": "members",
+            "selfJoin": false,
+            "cardCovers": true,
+            "isTemplate": false,
+            "cardAging": "regular",
+            "calendarFeedEnabled": false,
+            "background": "5d841b76d49a2174f5c0845d",
+            "backgroundImage": "https: //trello-backgrounds.s3.amazonaws.com/5d6d5c233df42711cfa3ea3b/524x274/b408ba921c6f5097e07c70a6930bd8c6/habiticaBackground.png",
+            "backgroundImageScaled": [
+                null
+            ],
+            "backgroundTile": false,
+            "backgroundBrightness": "dark",
+            "backgroundBottomColor": "#aa94e9",
+            "backgroundTopColor": "#7344bd",
+            "canBePublic": true,
+            "canBeEnterprise": true,
+            "canBeOrg": true,
+            "canBePrivate": true,
+            "canInvite": true
+        },
+        "labelNames": {
+            "green": "",
+            "yellow": "Foco de estudo",
+            "orange": "Vida",
+            "red": "Trabalho",
+            "purple": "Estudo",
+            "blue": "Visibilidade",
+            "sky": "",
+            "lime": "Projeto",
+            "pink": "Habitica",
+            "black": "Leitura"
+        }
+    },
+    "action": {
+        "id": "604ce1180b363804a9fa2dd0",
+        "idMemberCreator": "5d6d5c233df42711cfa3ea3b",
+        "data": {
+            "idMember": "5d6d5c233df42711cfa3ea3b",
+            "card": {
+                "idShort": 1458,
+                "name": "Webhooks",
+                "id": "51a79e72dbb7e23c7c003778"
+            },
+            "board": [
+                null
+            ],
+            "member": [
+                null
+            ]
+        },
+        "type": "addMemberToCard",
+        "date": "2021-03-13T15: 58: 16.662Z",
+        "appCreator": null,
+        "limits": {},
+        "display": {
+            "translationKey": "action_member_joined_card",
+            "entities": [
+                null
+            ]
+        },
+        "member": {
+            "id": "5d6d5c233df42711cfa3ea3b",
+            "username": "kopmark",
+            "activityBlocked": false,
+            "avatarHash": "a8f1c79d61e784220a82f9133f903ff4",
+            "avatarUrl": "https: //trello-members.s3.amazonaws.com/5d6d5c233df42711cfa3ea3b/a8f1c79d61e784220a82f9133f903ff4",
+            "fullName": "Marcelo Kopmann",
+            "idMemberReferrer": "5d6d4d957049cb3eac2019e3",
+            "initials": "MK",
+            "nonPublic": {},
+            "nonPublicAvailable": true
+        },
+        "memberCreator": {
+            "id": "5d6d5c233df42711cfa3ea3b",
+            "username": "kopmark",
+            "activityBlocked": false,
+            "avatarHash": "a8f1c79d61e784220a82f9133f903ff4",
+            "avatarUrl": "https: //trello-members.s3.amazonaws.com/5d6d5c233df42711cfa3ea3b/a8f1c79d61e784220a82f9133f903ff4",
+            "fullName": "Marcelo Kopmann",
+            "idMemberReferrer": "5d6d4d957049cb3eac2019e3",
+            "initials": "MK",
+            "nonPublic": {},
+            "nonPublicAvailable": true
+        }
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "badges": {
+        "attachments": 0,
+        "attachmentsByType": {
+            "trello": {
+                "board": 0,
+                "card": 0
+            }
+        },
+        "checkItems": 0,
+        "checkItemsChecked": 0,
+        "checkItemsEarliestDue": null,
+        "comments": 0,
+        "description": false,
+        "due": "2021-04-25T22:30:00.000Z",
+        "dueComplete": false,
+        "fogbugz": "",
+        "location": false,
+        "start": null,
+        "subscribed": true,
+        "viewingMemberVoted": false,
+        "votes": 0
+    },
+    "cardRole": null,
+    "checkItemStates": [],
+    "closed": false,
+    "cover": {
+        "brightness": "light",
+        "color": null,
+        "idAttachment": null,
+        "idPlugin": null,
+        "idUploadedBackground": null,
+        "size": "normal"
+    },
+    "dateLastActivity": "2021-03-13T15:58:16.659Z",
+    "desc": "",
+    "descData": null,
+    "due": "2021-04-25T22:30:00.000Z",
+    "dueComplete": false,
+    "dueReminder": -1,
+    "email": null,
+    "id": "60455404933aa77e8f09f518",
+    "idAttachmentCover": null,
+    "idBoard": "5d838928f37251094ec4139b",
+    "idChecklists": [],
+    "idLabels": [
+        "5debb6f0d98d5843e83be149"
+    ],
+    "idList": "5d838928f37251094ec4139d",
+    "idMembers": [
+        "5d6d5c233df42711cfa3ea3b"
+    ],
+    "idMembersVoted": [],
+    "idShort": 75,
+    "isTemplate": false,
+    "labels": [
+        {
+            "color": "blue",
+            "id": "5debb6f0d98d5843e83be149",
+            "idBoard": "5d838928f37251094ec4139b",
+            "name": "Visibilidade"
+        }
+    ],
+    "manualCoverAttachment": false,
+    "name": "Organizar CodeCon",
+    "pos": 4311.988037109375,
+    "shortLink": "PSzYqlqW",
+    "shortUrl": "https://trello.com/c/PSzYqlqW",
+    "start": null,
+    "subscribed": true,
+    "url": "https://trello.com/c/PSzYqlqW/75-organizar-codecon"
+}
