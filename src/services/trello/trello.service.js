@@ -43,6 +43,16 @@ module.exports = {
 				this.logger.info('Received trello webhook update', ctx.params)
 			}
 		},
+		onHeadRequest: {
+			/**
+			 * Action to respond to a head request for the webhook endpoint
+			 * @param { import('moleculer').Context } ctx - Moleculer context.
+			 * @returns { Any }
+			 */
+			handler(ctx) {
+				return 'ok'
+			}
+		},
 	},
 
 	/**

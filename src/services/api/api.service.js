@@ -27,6 +27,7 @@ module.exports = {
 					'POST /trackingmore': 'trackingmore.onWebhookTrigger',
 					'POST /telegram': 'telegram.onWebhookTrigger',
 					'POST /trello': 'trello.onWebhookTrigger',
+					'HEAD /trello': 'trello.onHeadRequest',
 				},
 				bodyParsers: {
 					json: true
