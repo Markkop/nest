@@ -156,7 +156,7 @@ module.exports = {
 		async createTrackingItem(trackingNumber, carrierCode) {
 			try {
 				if (!carrierCode) {
-					carrierCode = await this.getCarrierCode(trackingNumber)
+					carrierCode = await this.getCarrierCode(trackingNumber) || 'cainiao'
 				}
 				const body = {
 					'tracking_number': trackingNumber,
