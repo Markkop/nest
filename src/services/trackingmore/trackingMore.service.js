@@ -188,7 +188,7 @@ module.exports = {
 				carrierCode: item.carrier_code,
 				timeElapsed: timeElapsed,
 				substatus: item.substatus,
-				lastTrackInfo: item.origin_info && item.origin_info.trackinfo[0],
+				lastTrackInfo: trackInfo[0],
 				lastEvent: item.lastEvent,
 				destinationTrackNumber: item.destination_track_number
 			}
