@@ -13,16 +13,6 @@ module.exports = {
 				path: '/webhooks',
 				mappingPolicy: 'restrict',
 				aliases: {
-					'POST /tasks': [
-						function asanaWebhookHandshake(req, res, next) {
-							const hookSecret = req.headers['x-hook-secret']
-							if (hookSecret) {
-								res.setHeader('X-Hook-Secret', hookSecret)
-							}
-							return next()
-						},
-						'asana.syncByEvents'
-					],
 					'POST /habitica': 'habitica.onWebhookTrigger',
 					'POST /trackingmore': 'trackingmore.onWebhookTrigger',
 					'POST /telegram': 'telegram.onWebhookTrigger',
