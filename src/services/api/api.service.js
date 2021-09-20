@@ -71,6 +71,16 @@ module.exports = {
 					methods: ['GET'],
 					credentials: false
 				},
+			},
+			{
+				mappingPolicy: 'restrict',
+				path: '/corvo-astral-servers',
+				aliases: {
+					'GET /': 'badges.getCorvoAstralServersBadge',
+				},
+				bodyParsers: {
+					json: true
+				},
 			}
 		]
 	},
