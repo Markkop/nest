@@ -81,6 +81,16 @@ module.exports = {
 				bodyParsers: {
 					json: true
 				},
+			},
+			{
+				mappingPolicy: 'restrict',
+				path: '/json',
+				aliases: {
+					'GET /': 'json.getJson',
+				},
+				bodyParsers: {
+					json: true
+				},
 			}
 		]
 	},
