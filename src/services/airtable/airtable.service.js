@@ -26,6 +26,11 @@ module.exports = {
 				return this.getCorvoAstralServers()
 			}
 		},
+		getDriftServers: {
+			handler() {
+				return this.getCorvoAstralServers()
+			}
+		},
 	},
 
 	/**
@@ -35,6 +40,14 @@ module.exports = {
 		async getCorvoAstralServers() {
 			try {
 				const { data } = await this.axios.get(`${process.env.CORVO_ASTRAL_SERVERS_AIRTABLE_TABLE_PATH}/${process.env.CORVO_ASTRAL_SERVERS_AIRTABLE_RECORD_ID}`)
+				return data.fields.Name
+			} catch (error) {
+				console.log(error)
+			}
+		},
+		async getDriftBotServers() {
+			try {
+				const { data } = await this.axios.get(`${process.env.DRIFT_SERVERS_AIRTABLE_TABLE_PATH}/${process.env.DRIFT_SERVERS_AIRTABLE_RECORD_ID}`)
 				return data.fields.Name
 			} catch (error) {
 				console.log(error)

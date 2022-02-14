@@ -84,13 +84,23 @@ module.exports = {
 			},
 			{
 				mappingPolicy: 'restrict',
+				path: '/drift-bot-servers',
+				aliases: {
+					'GET /': 'badges.getDriftBotServersBadge',
+				},
+				bodyParsers: {
+					json: true
+				},
+			},
+			{
+				mappingPolicy: 'restrict',
 				path: '/json',
 				aliases: {
 					'GET /': 'json.getJson',
 				},
 				bodyParsers: {
 					json: true
-				},
+				}
 			}
 		]
 	},

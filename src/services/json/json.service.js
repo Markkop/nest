@@ -24,7 +24,7 @@ module.exports = {
 	methods: {
 		getJson(stringifiedJson) {
 			try {
-				return JSON.parse(JSON.parse(stringifiedJson))
+				return '<div>'+ JSON.stringify(JSON.parse(JSON.parse(stringifiedJson))) + '</div>'
 			} catch (error) {
 				console.log(error)
 			}

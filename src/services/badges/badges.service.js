@@ -16,6 +16,11 @@ module.exports = {
 				return this.getCorvoAstralServersBadge()
 			}
 		},
+		getDriftBotServersBadge: {
+			handler() {
+				return this.getDriftBotServersBadge()
+			}
+		},
 	},
 
 	/**
@@ -25,6 +30,19 @@ module.exports = {
 		async getCorvoAstralServersBadge() {
 			try {
 				const servers = await this.broker.call('airtable.getCorvoAstralServers')
+				return {
+					'schemaVersion': 1,
+					'label': 'online',
+					'message': `${servers} servers`,
+					'color': 'brightgreen'
+				}
+			} catch (error) {
+				console.log(error)
+			}
+		},
+		async getDriftBotServersBadge() {
+			try {
+				const servers = await this.broker.call('airtable.getDriftBotServers')
 				return {
 					'schemaVersion': 1,
 					'label': 'online',
