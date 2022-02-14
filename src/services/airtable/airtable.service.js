@@ -26,9 +26,9 @@ module.exports = {
 				return this.getCorvoAstralServers()
 			}
 		},
-		getDriftServers: {
+		getDriftBotServers: {
 			handler() {
-				return this.getCorvoAstralServers()
+				return this.getDriftBotServers()
 			}
 		},
 	},
