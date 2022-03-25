@@ -129,7 +129,7 @@ module.exports = {
 					disable_notification: true
 				}
 				const { data } = await this.axios.post('/sendMessage', options)
-				this.logger.info('Task sent to telegram', text)
+				this.logger.info('Task sent to telegram', text.substring(0, 100) + '...')
 				return data
 			} catch (error) {
 				this.logger.error(error)

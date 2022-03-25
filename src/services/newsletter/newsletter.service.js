@@ -43,9 +43,11 @@ module.exports = {
 		async onWebhookTrigger({data}) {
 			try {
 				const parsedHtml = data
-					.replace(/<p[^>]+>(.|\n)*?<\/p>/g, match => match.replace(/\n/g, ''))
+					.replace(/<p[^>]+>(.|\n)*?<\/p>/g, match => '\n' + match.replace(/\n/g, ''))
+					.replace(/<a([^>]+)><\/a>/g, '')
 					.replace(/<a([^>]+)>((.|\n)*?)<\/a>/g, match => match.replace(/\n/g, ''))
-					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n/g, '')+ '\n')
+					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n/g, ''))
+					.replace(/h1|h2|h3>/g, 'b')
 					.replace(/<br>/g, '\n')
 
 				const filteredHtml = FilterHTML.filter_html(parsedHtml, {
@@ -61,9 +63,11 @@ module.exports = {
 					'pre': {},
 				})
 				const text = filteredHtml
+					.replace(/<b>\n*<\/b>/g, '')
 					.replace(/\n\s*\n\s*\n/g, '\n\n')
 					.replace(/&nbsp;/g, ' ')
-	
+				
+				this.logger.info(JSON.stringify(text))
 				this.broker.call('telegram.sendTextToChatId', { text , chatId: process.env.TELEGRAM_USERID, parseMode: 'html' })
 				return data
 			} catch (error) {
