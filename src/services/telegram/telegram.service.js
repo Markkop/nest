@@ -42,7 +42,7 @@ module.exports = {
 		 */
 		sendTextToChatId: {
 			handler(ctx) {
-				return this.sendTextToChatId(ctx.params.text, ctx.params.chatId)
+				return this.sendTextToChatId(ctx.params.text, ctx.params.chatId, ctx.params.parseMode)
 			}
 		},
 
@@ -115,12 +115,17 @@ module.exports = {
 		 * @param { String } message
 		 * @returns { Object } request response
 		 */
-		async sendTextToChatId(text, chatId) {
+		async sendTextToChatId(text, chatId, parseMode = 'html') {
 			try {
+				const telegramParseMode = {
+					'html': 'HTML',
+					'markdown': 'MarkdownV2'
+				}
+
 				const options = {
 					text, 
 					chat_id: chatId,
-					parse_mode: 'HTML',
+					parse_mode: telegramParseMode[parseMode],
 					disable_notification: true
 				}
 				const { data } = await this.axios.post('/sendMessage', options)

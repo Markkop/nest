@@ -1,3 +1,5 @@
+const FilterHTML = require('filterhtml')
+
 module.exports = {
 	name: 'newsletter',
 
@@ -38,9 +40,31 @@ module.exports = {
 		 * @param { String } message
 		 * @returns { Object } request response
 		 */
-		async onWebhookTrigger(data) {
+		async onWebhookTrigger({data}) {
 			try {
-				this.logger.info('Update received on Newsletter endpoint', JSON.stringify(data,2,null))
+				const parsedHtml = data
+					.replace(/<p[^>]+>(.|\n)*?<\/p>/g, match => match.replace(/\n/g, ''))
+					.replace(/<a([^>]+)>((.|\n)*?)<\/a>/g, match => match.replace(/\n/g, ''))
+					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n/g, '')+ '\n')
+					.replace(/<br>/g, '\n')
+
+				const filteredHtml = FilterHTML.filter_html(parsedHtml, {
+					'a': {
+						'href': 'url'
+					},
+					'b': {},
+					'strong': {},
+					'i': {},
+					'em': {},
+					'u': {},
+					's': {},
+					'pre': {},
+				})
+				const text = filteredHtml
+					.replace(/\n\s*\n\s*\n/g, '\n\n')
+					.replace(/&nbsp;/g, ' ')
+	
+				this.broker.call('telegram.sendTextToChatId', { text , chatId: process.env.TELEGRAM_USERID, parseMode: 'html' })
 				return data
 			} catch (error) {
 				this.logger.error(error)

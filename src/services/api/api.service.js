@@ -21,7 +21,7 @@ module.exports = {
 					'HEAD /trello': 'trello.onHeadRequest',
 				},
 				bodyParsers: {
-					json: true
+					json: true,
 				}
 			},
 			{
