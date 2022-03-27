@@ -128,9 +128,9 @@ module.exports = {
 					parse_mode: telegramParseMode[parseMode],
 					disable_notification: true
 				}
-				const { data } = await this.axios.post('/sendMessage', options)
-				this.logger.info('Task sent to telegram', text.substring(0, 100) + '...')
-				return data
+
+				await this.axios.post('/sendMessage', options)
+				return `Message sent to telegram's chat id ${chatId}`
 			} catch (error) {
 				this.logger.error(error)
 			}
