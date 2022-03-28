@@ -134,6 +134,7 @@ module.exports = {
 			if (twoLineBreaks.length === 1) return
 			twoLineBreaks.splice(-1)
 			const previousTextBlock = twoLineBreaks.join('\n')
+			if (!previousTextBlock) return
 			await this.axios.post('/sendMessage', {
 				...options,
 				text: previousTextBlock,
