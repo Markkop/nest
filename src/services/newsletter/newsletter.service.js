@@ -58,7 +58,7 @@ module.exports = {
 				const imgHtmlString = this.getEmailImageBasedOnOrderAndSize(html)
 				if (imgHtmlString) {
 					const imageMatch = imgHtmlString.match(/src="([^"]+)"/)
-					this.broker.call('telegram.sendPhotoToChatId', { photoUrl: imageMatch[1] , chatId: process.env.TELEGRAM_USERID})
+					await this.broker.call('telegram.sendPhotoToChatId', { photoUrl: imageMatch[1] , chatId: process.env.TELEGRAM_USERID})
 				}
 
 				const parsedHtml = html
