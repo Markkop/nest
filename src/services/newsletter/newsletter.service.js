@@ -1,4 +1,5 @@
 const axios = require('axios')
+const {decode} = require('html-entities')
 const FilterHTML = require('filterhtml')
 
 module.exports = {
@@ -84,7 +85,10 @@ module.exports = {
 					's': {},
 					'pre': {},
 				})
-				const text = filteredHtml
+
+				const decodedHtml = decode(filteredHtml)
+
+				const text = decodedHtml
 					.replace(/<b>\n*<\/b>/g, '')
 					.replace(/<a([^>]+)><\/a>/g, '')
 					.replace(/\n\s*\n\s*\n/g, '\n\n')
