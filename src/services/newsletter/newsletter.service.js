@@ -68,9 +68,10 @@ module.exports = {
 					.replace(/<a([^>]+)><\/a>/g, '')
 					.replace(/<a([^>]+)>((.|\n)*?)<\/a>/g, match => match.replace(/\n/g, ''))
 					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n/g, ''))
-					.replace(/<h1([^>]*)>((.|\n)*?)<\/h1>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>`)
-					.replace(/<h2([^>]*)>((.|\n)*?)<\/h2>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>`)
-					.replace(/<h3([^>]*)>((.|\n)*?)<\/h3>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>`)
+					.replace(/<h1([^>]*)>((.|\n)*?)<\/h1>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>\n`)
+					.replace(/<h2([^>]*)>((.|\n)*?)<\/h2>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>\n`)
+					.replace(/<h3([^>]*)>((.|\n)*?)<\/h3>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>\n`)
+					.replace(/<ul([^>]*)>((.|\n)*?)<\/ul>/g, (match, p1, p2) => `\n${p2}\n`)
 					.replace(/<br>/g, '\n')
 
 				const filteredHtml = FilterHTML.filter_html(parsedHtml, {
