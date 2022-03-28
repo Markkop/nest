@@ -47,6 +47,17 @@ module.exports = {
 		},
 
 		/**
+		 * Send a photo to an user via telegram bot
+		 * @param { String } message
+		 * @returns { Object }
+		 */
+		sendPhotoToChatId: {
+			handler(ctx) {
+				return this.sendPhotoToChatId(ctx.params.photoUrl, ctx.params.chatId)
+			}
+		},
+
+		/**
 		 * Get task from Asana and send to telegram bot
 		 */
 		syncTaskFromAsanaById: {
@@ -111,6 +122,28 @@ module.exports = {
 		},
 
 		/**
+		 * Split a long message in small chunks and send them to telegram
+		 *
+		 * @param { string } text - Text Message to be sent
+		 * @param { object } options - Telegram sendMessage options
+		 * @returns { Promise<void> }
+		 */
+		async splitAndSend(text, options) {
+			const subtext =  text.substring(0, 4096)
+			const twoLineBreaks = subtext.split('\n')
+			if (twoLineBreaks.length === 1) return
+			twoLineBreaks.splice(-1)
+			const previousTextBlock = twoLineBreaks.join('\n')
+			await this.axios.post('/sendMessage', {
+				...options,
+				text: previousTextBlock,
+				disable_web_page_preview: true
+			})
+			const remainingText = text.substring(previousTextBlock.length, text.length)
+			return this.splitAndSend(remainingText, options)
+		},
+
+		/**
 		 * Send a message to an user via telegram bot
 		 * @param { String } message
 		 * @returns { Object } request response
@@ -129,8 +162,48 @@ module.exports = {
 					disable_notification: true
 				}
 
-				await this.axios.post('/sendMessage', options)
+				if (text.length >= 4096) {
+					await this.splitAndSend(text, options)
+				} else {
+					await this.axios.post('/sendMessage', options)
+				}
+
+				// NOTE: Keeping this commented code to reference it in the blog post
+				// if (text.length >= 4096) {
+				// 	for (let i = 0; i < text.length; i+=4096) {
+				// 		await this.axios.post('/sendMessage', {
+				// 			...options,
+				// 			text: text.substring(i, i+4096)
+				// 		})
+				// 	}
+				// } else {
+				// 	await this.axios.post('/sendMessage', options)
+				// }
+
 				return `Message sent to telegram's chat id ${chatId}`
+			} catch (error) {
+				this.logger.error(error)
+			}
+		},
+		/**
+		 * Send a photo to an user via telegram bot
+		 * @param { string } photoUrl
+		 * @param { string } chatId
+		 * @param { string } parseMode
+		 * @returns { Object } request response
+		 */
+		async sendPhotoToChatId(photoUrl, chatId) {
+			try {
+
+				const options = {
+					photo: photoUrl, 
+					chat_id: chatId,
+					disable_notification: true
+				}
+
+				await this.axios.post('/sendPhoto', options)
+
+				return `Photo sent to telegram's chat id ${chatId}`
 			} catch (error) {
 				this.logger.error(error)
 			}

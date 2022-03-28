@@ -22,7 +22,6 @@ module.exports = {
 		},
 
 		onWebhookTrigger: {
-			timeout: 180000,
 			/**
 			 * Actions to be done according to the webhook's trigger
 			 * @param { import('moleculer').Context } ctx - Moleculer context.
@@ -38,21 +37,39 @@ module.exports = {
 	 * Methods.
 	 */
 	methods: {
-		/**
-		 * Logs
-		 * @param { String } message
-		 * @returns { Object } request response
-		 */
-		async onWebhookTrigger({data}) {
+		getEmailImageBasedOnOrderAndSize(htmlString) {
+			return htmlString.match(/<img[^>]*?src\s*=\s*[""']?([^'"" >]+?)[ '""][^>]*?>/g).find(img => {
+				const heightMatch = img.match(/height="([^"]+)"/)
+				if (!heightMatch) {
+					const widthMatch = img.match(/width="([^"]+)"/)
+					if (!widthMatch) return false
+					const width = Number(widthMatch[1])	
+					if (Number.isNaN(width)) return false
+					return width > 500
+				}
+				const height = Number(heightMatch[1])
+				if (Number.isNaN(height)) return false
+				return height > 100
+			})
+		},
+
+		async onWebhookTrigger({html}) {
 			try {
-				const parsedHtml = data
+				const imgHtmlString = this.getEmailImageBasedOnOrderAndSize(html)
+				if (imgHtmlString) {
+					const imageMatch = imgHtmlString.match(/src="([^"]+)"/)
+					this.broker.call('telegram.sendPhotoToChatId', { photoUrl: imageMatch[1] , chatId: process.env.TELEGRAM_USERID})
+				}
+
+				const parsedHtml = html
 					.replace(/<p[^>]+>(.|\n)*?<\/p>/g, match => '\n' + match.replace(/\n/g, ''))
+					.replace(/<li[^>]+>((.|\n)*?)<\/li>/g, (match, p1) => `\n* ${p1.replace(/\n/g, '')}`)
 					.replace(/<a([^>]+)><\/a>/g, '')
 					.replace(/<a([^>]+)>((.|\n)*?)<\/a>/g, match => match.replace(/\n/g, ''))
 					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n/g, ''))
-					.replace(/h1|h2|h3/g, 'b')
-					.replace(/<li[^>]*>/g, '<p>\n* ')
-					.replace(/<\/li>/g, '</p>')
+					.replace(/<h1([^>]*)>((.|\n)*?)<\/h1>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>`)
+					.replace(/<h2([^>]*)>((.|\n)*?)<\/h2>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>`)
+					.replace(/<h3([^>]*)>((.|\n)*?)<\/h3>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>`)
 					.replace(/<br>/g, '\n')
 
 				const filteredHtml = FilterHTML.filter_html(parsedHtml, {
@@ -74,19 +91,20 @@ module.exports = {
 					.replace(/&nbsp;/g, ' ')
 					.replace(/\n\n\s*/g, '\n\n')
 				
-				const hrefs = [...text.matchAll(/href="(.*?)"/g)]
-				let shortText = text
-				if (shortText.length >= 4096) {
-					for (let index = 0; index < hrefs.length; index++) {
-						const [, url ] = hrefs[index]
-						const shortUrl = await this.shortUrl(url)
-						shortText = shortText.replace(url, shortUrl)
-					}
-				}
+				// NOTE: Keeping this commented code to reference it in the blog post
+				// const hrefs = [...text.matchAll(/href="(.*?)"/g)]
+				// let shortText = text
+				// if (shortText.length >= 4096) {
+				// 	for (let index = 0; index < hrefs.length; index++) {
+				// 		const [, url ] = hrefs[index]
+				// 		const shortUrl = await this.shortUrl(url)
+				// 		shortText = shortText.replace(url, shortUrl)
+				// 	}
+				// }
 
-				this.logger.info(JSON.stringify(shortText))
-				this.broker.call('telegram.sendTextToChatId', { text: shortText , chatId: process.env.TELEGRAM_USERID, parseMode: 'html' })
-				return shortText
+				// this.logger.info(JSON.stringify(text))
+				this.broker.call('telegram.sendTextToChatId', { text: text , chatId: process.env.TELEGRAM_USERID, parseMode: 'html' })
+				return text
 			} catch (error) {
 				this.logger.error(error)
 				return error

@@ -21,7 +21,10 @@ module.exports = {
 					'HEAD /trello': 'trello.onHeadRequest',
 				},
 				bodyParsers: {
-					json: true,
+					json: {
+						strict: false,
+						limit: '10MB'
+					},
 				}
 			},
 			{
