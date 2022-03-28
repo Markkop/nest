@@ -130,10 +130,10 @@ module.exports = {
 		 */
 		async splitAndSend(text, options) {
 			const subtext =  text.substring(0, 4096)
-			const twoLineBreaks = subtext.split('\n')
-			if (twoLineBreaks.length === 1) return
-			twoLineBreaks.splice(-1)
-			const previousTextBlock = twoLineBreaks.join('\n')
+			const textSplittedByLineBreak = subtext.split('\n')
+			if (textSplittedByLineBreak.length === 1) return
+			textSplittedByLineBreak.splice(-1)
+			const previousTextBlock = textSplittedByLineBreak.join('\n')
 			if (!previousTextBlock) return
 			await this.axios.post('/sendMessage', {
 				...options,
@@ -168,18 +168,6 @@ module.exports = {
 				} else {
 					await this.axios.post('/sendMessage', options)
 				}
-
-				// NOTE: Keeping this commented code to reference it in the blog post
-				// if (text.length >= 4096) {
-				// 	for (let i = 0; i < text.length; i+=4096) {
-				// 		await this.axios.post('/sendMessage', {
-				// 			...options,
-				// 			text: text.substring(i, i+4096)
-				// 		})
-				// 	}
-				// } else {
-				// 	await this.axios.post('/sendMessage', options)
-				// }
 
 				return `Message sent to telegram's chat id ${chatId}`
 			} catch (error) {
