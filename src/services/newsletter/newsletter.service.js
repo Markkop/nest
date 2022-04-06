@@ -97,7 +97,7 @@ module.exports = {
 					.replace(/\n\s*\n\s*\n/g, '\n\n')
 					.replace(/&nbsp;/g, ' ')
 					.replace(/\n\n\s*/g, '\n\n')
-					.replace(/<(([^<]*)@([^>]*))>/g, '')
+					.replace(/<(([^</]*)@([^>]*))>/g, '')
 				
 				// NOTE: Keeping this commented code to reference it in the blog post
 				// const hrefs = [...text.matchAll(/href="(.*?)"/g)]
