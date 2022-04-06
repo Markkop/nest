@@ -39,7 +39,9 @@ module.exports = {
 	 */
 	methods: {
 		getEmailImageBasedOnOrderAndSize(htmlString) {
-			return htmlString.match(/<img[^>]*?src\s*=\s*[""']?([^'"" >]+?)[ '""][^>]*?>/g).find(img => {
+			const imgMatches = htmlString.match(/<img[^>]*?src\s*=\s*[""']?([^'"" >]+?)[ '""][^>]*?>/g)
+			if (!imgMatches) return
+			return imgMatches.find(img => {
 				const heightMatch = img.match(/height="([^"]+)"/)
 				if (!heightMatch) {
 					const widthMatch = img.match(/width="([^"]+)"/)
