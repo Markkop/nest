@@ -39,6 +39,7 @@ module.exports = {
 	 */
 	methods: {
 		getEmailImageBasedOnOrderAndSize(htmlString) {
+			if (!htmlString) return
 			const imgMatches = htmlString.match(/<img[^>]*?src\s*=\s*[""']?([^'"" >]+?)[ '""][^>]*?>/g)
 			if (!imgMatches) return
 			return imgMatches.find(img => {
@@ -58,6 +59,7 @@ module.exports = {
 
 		async onWebhookTrigger({html}) {
 			try {
+				console.log(JSON.stringify(html))
 				const imgHtmlString = this.getEmailImageBasedOnOrderAndSize(html)
 				if (imgHtmlString) {
 					const imageMatch = imgHtmlString.match(/src="([^"]+)"/)
@@ -65,15 +67,15 @@ module.exports = {
 				}
 
 				const parsedHtml = html
-					.replace(/<p[^>]+>(.|\n)*?<\/p>/g, match => '\n' + match.replace(/\n/g, ''))
-					.replace(/<li[^>]+>((.|\n)*?)<\/li>/g, (match, p1) => `\n* ${p1.replace(/\n/g, '')}`)
+					.replace(/<p[^>]+>(.|\n|\r)*?<\/p>/g, match => '\n' + match.replace(/\n|\r/g, ''))
+					.replace(/<li[^>]+>((.|\n|\r)*?)<\/li>/g, (match, p1) => `\n* ${p1.replace(/\n|\r/g, '')}`)
 					.replace(/<a([^>]+)><\/a>/g, '')
-					.replace(/<a([^>]+)>((.|\n)*?)<\/a>/g, match => match.replace(/\n/g, ''))
-					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n/g, ''))
-					.replace(/<h1([^>]*)>((.|\n)*?)<\/h1>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>\n`)
-					.replace(/<h2([^>]*)>((.|\n)*?)<\/h2>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>\n`)
-					.replace(/<h3([^>]*)>((.|\n)*?)<\/h3>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n/g, '')}</b>\n`)
-					.replace(/<ul([^>]*)>((.|\n)*?)<\/ul>/g, (match, p1, p2) => `\n${p2}\n`)
+					.replace(/<a([^>]+)>((.|\n|\r)*?)<\/a>/g, match => match.replace(/\n|\r/g, ''))
+					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n|\r/g, ''))
+					.replace(/<h1([^>]*)>((.|\n|\r)*?)<\/h1>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n|\r/g, '')}</b>\n`)
+					.replace(/<h2([^>]*)>((.|\n|\r)*?)<\/h2>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n|\r/g, '')}</b>\n`)
+					.replace(/<h3([^>]*)>((.|\n|\r)*?)<\/h3>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n|\r/g, '')}</b>\n`)
+					.replace(/<ul([^>]*)>((.|\n|\r)*?)<\/ul>/g, (match, p1, p2) => `\n${p2}\n`)
 					.replace(/<br>/g, '\n')
 
 				const filteredHtml = FilterHTML.filter_html(parsedHtml, {
@@ -98,6 +100,7 @@ module.exports = {
 					.replace(/&nbsp;/g, ' ')
 					.replace(/\n\n\s*/g, '\n\n')
 					.replace(/<(([^</]*)@([^>]*))>/g, '')
+					.replace(/<a([^>]+)>((.|\n)*?)<\/a>/g, match => match.replace(/\n/g, ''))
 				
 				// NOTE: Keeping this commented code to reference it in the blog post
 				// const hrefs = [...text.matchAll(/href="(.*?)"/g)]
