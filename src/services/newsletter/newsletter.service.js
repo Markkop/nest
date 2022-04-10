@@ -67,11 +67,12 @@ module.exports = {
 				}
 
 				const parsedHtml = html
-					.replace(/<p[^>]+>(.|\n|\r)*?<\/p>/g, match => '\n' + match.replace(/\n|\r/g, ''))
-					.replace(/<li[^>]+>((.|\n|\r)*?)<\/li>/g, (match, p1) => `\n* ${p1.replace(/\n|\r/g, '')}`)
-					.replace(/<a([^>]+)><\/a>/g, '')
-					.replace(/<a([^>]+)>((.|\n|\r)*?)<\/a>/g, match => match.replace(/\n|\r/g, ''))
-					.replace(/<span([^>]+)>((.|\n)*?)<\/span>/g, match => match.replace(/\n|\r/g, ''))
+					.replace(/<p[^>]*>(.|\n|\r)*?<\/p>/g, match => '\n' + match.replace(/\n|\r/g, ''))
+					.replace(/<strong[^>]*>(.|\n|\r)*?<\/strong>/g, match => '\n' + match.replace(/\n|\r/g, ''))
+					.replace(/<li[^>]*>((.|\n|\r)*?)<\/li>/g, (match, p1) => `\n* ${p1.replace(/\n|\r/g, '')}`)
+					.replace(/<a([^>]*)><\/a>/g, '')
+					.replace(/<a([^>]*)>((.|\n|\r)*?)<\/a>/g, match => match.replace(/\n|\r/g, ''))
+					.replace(/<span([^>]*)>((.|\n)*?)<\/span>/g, match => match.replace(/\n|\r/g, ''))
 					.replace(/<h1([^>]*)>((.|\n|\r)*?)<\/h1>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n|\r/g, '')}</b>\n`)
 					.replace(/<h2([^>]*)>((.|\n|\r)*?)<\/h2>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n|\r/g, '')}</b>\n`)
 					.replace(/<h3([^>]*)>((.|\n|\r)*?)<\/h3>/g, (match, p1, p2) => `\n<b>${p2.replace(/\n|\r/g, '')}</b>\n`)
