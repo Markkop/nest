@@ -67,6 +67,8 @@ module.exports = {
 				}
 
 				const parsedHtml = html
+					.replace(/&gt;/g, '→')
+					.replace(/&lt;/g, '←')
 					.replace(/<p[^>]*>(.|\n|\r)*?<\/p>/g, match => '\n' + match.replace(/\n|\r/g, ''))
 					.replace(/<strong[^>]*>(.|\n|\r)*?<\/strong>/g, match => '\n' + match.replace(/\n|\r/g, ''))
 					.replace(/<li[^>]*>((.|\n|\r)*?)<\/li>/g, (match, p1) => `\n* ${p1.replace(/\n|\r/g, '')}`)
